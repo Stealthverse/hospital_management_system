@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration - Vanguard Health</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 font-sans antialiased text-slate-800 flex items-center justify-center min-h-screen py-8">
+
+    <div class="bg-white p-8 rounded-3xl shadow-xl max-w-lg w-full border border-slate-200/80 mx-4">
+        <div class="text-center mb-6">
+            <div class="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mx-auto mb-3 shadow-xs">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900">New Patient Registration</h2>
+            <p class="text-xs text-slate-500 mt-1">Create your Vanguard Health patient account</p>
+        </div>
+
+        <form onsubmit="handlePatientRegister(event)" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">First Name</label>
+                    <input type="text" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm" placeholder="John">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Last Name</label>
+                    <input type="text" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm" placeholder="Doe">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address</label>
+                <input type="email" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm" placeholder="john.doe@example.com">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Phone Number</label>
+                <input type="tel" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm" placeholder="+1 (555) 019-2834">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Create Password</label>
+                <input type="password" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-emerald-700 transition shadow-sm">Register Account</button>
+        </form>
+
+        <div class="mt-6 text-center text-xs text-slate-500 space-y-2">
+            <p>Already registered? <a href="patient-login.html" class="text-emerald-600 font-bold hover:underline">Sign in here</a></p>
+            <p><a href="index.html" class="text-slate-400 hover:text-slate-600">&larr; Back to Main Website</a></p>
+        </div>
+    </div>
+
+    <script>
+        function handlePatientRegister(e) {
+            e.preventDefault();
+            alert('Patient account registered and logged in successfully!');
+            window.location.href = 'index.html#home';
+        }
+    </script>
+</body>
+</html>

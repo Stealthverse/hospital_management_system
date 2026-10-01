@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Registration - Vanguard Health</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 font-sans antialiased text-slate-100 flex items-center justify-center min-h-screen py-8">
+
+    <div class="bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-lg w-full border border-slate-700 mx-4">
+        <div class="text-center mb-6">
+            <div class="bg-sky-500/20 text-sky-400 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mx-auto mb-3 border border-sky-500/30">
+                <i class="fa-solid fa-stethoscope"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white">Physician Credentialing</h2>
+            <p class="text-xs text-slate-400 mt-1">Submit your medical license for hospital network access</p>
+        </div>
+
+        <form onsubmit="handleDoctorRegister(event)" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Full Name</label>
+                    <input type="text" required class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="Dr. Jane Doe">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Medical License #</label>
+                    <input type="text" required class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="LIC-99201">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Specialty Department</label>
+                <select class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm">
+                    <option>Cardiology</option>
+                    <option>Neurology</option>
+                    <option>Pediatrics</option>
+                    <option>General Surgery</option>
+                    <option>Diagnostics & Radiology</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Professional Email</label>
+                <input type="email" required class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="dr.doe@vanguardhealth.org">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Secure Password</label>
+                <input type="password" required class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full bg-sky-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-sky-500 transition shadow-md">Submit Application</button>
+        </form>
+
+        <div class="mt-6 text-center text-xs text-slate-400 space-y-2">
+            <p>Already approved? <a href="doctor-login.html" class="text-sky-400 font-bold hover:underline">Sign in here</a></p>
+            <p><a href="index.html" class="text-slate-500 hover:text-slate-300">&larr; Back to Main Website</a></p>
+        </div>
+    </div>
+
+    <script>
+        function handleDoctorRegister(e) {
+            e.preventDefault();
+            alert('Physician registration application submitted successfully.');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
