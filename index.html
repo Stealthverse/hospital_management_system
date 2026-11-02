@@ -29,14 +29,14 @@
             margin: 0 auto;
         }
 
-        /* Login Screen Styles */
-        #login-screen {
+        /* Login & Form Screens */
+        .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 90vh;
         }
-        .login-card {
+        .auth-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             padding: 40px;
@@ -46,12 +46,29 @@
             width: 100%;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
-        .login-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
-        .login-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
-        .login-btn {
+        .auth-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
+        .auth-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+        
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-deep);
+            color: white;
+            box-sizing: border-box;
+        }
+        .input-field:focus { outline: none; border-color: var(--accent-blue); }
+
+        .auth-btn {
             width: 100%;
             padding: 12px;
-            margin-bottom: 15px;
+            margin-top: 10px;
             font-weight: bold;
             border-radius: 8px;
             border: none;
@@ -60,7 +77,8 @@
         }
         .btn-doc { background: #2563eb; color: white; }
         .btn-pat { background: #059669; color: white; }
-        .login-btn:hover { opacity: 0.9; }
+        .auth-btn:hover { opacity: 0.9; }
+        .back-text { margin-top: 15px; font-size: 13px; color: var(--accent-blue); cursor: pointer; display: inline-block; }
 
         /* Dashboard Header */
         header {
@@ -80,7 +98,6 @@
         h1 { font-size: 36px; margin: 10px 0; color: #ffffff; }
         .subtitle { color: var(--text-muted); font-size: 14px; max-width: 600px; margin: 0 auto 20px auto; }
         
-        /* Pulse Line Graphic */
         .pulse-line {
             height: 30px;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 50' preserveAspectRatio='none'%3E%3Cpath d='M0,25 L200,25 L220,10 L240,40 L260,20 L280,30 L300,25 L600,25 L620,5 L640,45 L660,25 L1000,25' fill='none' stroke='%2314b8a6' stroke-width='2'/%3E%3C/svg%3E") center no-repeat;
@@ -104,7 +121,7 @@
         .metric-val { font-size: 18px; font-weight: bold; color: white; }
         .metric-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
-        /* Navigation / Role bar */
+        /* Top Nav */
         .top-nav {
             display: flex;
             justify-content: space-between;
@@ -150,7 +167,7 @@
         .card ul { padding-left: 16px; color: var(--text-muted); font-size: 13px; margin: 10px 0 0 0; }
         .card li { margin-bottom: 4px; }
 
-        /* Detailed View Tables */
+        /* Detailed Views */
         .detail-view {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -158,6 +175,23 @@
             border-radius: 12px;
             display: none;
         }
+        .header-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .action-btn {
+            background: var(--accent-teal);
+            color: #0b0f19;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .action-btn:hover { opacity: 0.9; }
         .back-btn {
             background: #334155;
             color: white;
@@ -165,7 +199,6 @@
             padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
-            margin-bottom: 20px;
             font-size: 13px;
         }
         table {
@@ -193,17 +226,35 @@
 <body>
 
     <div class="wrapper">
-        <!-- LOGIN SCREEN -->
-        <div id="login-screen">
-            <div class="login-card">
+        <!-- SCREEN 1: PORTAL SELECTION -->
+        <div id="selection-screen" class="auth-container">
+            <div class="auth-card">
                 <h2>MediCore System</h2>
-                <p>Select your portal role to access restricted clinical workflows.</p>
-                <button class="login-btn btn-doc" onclick="login('doctor')">Login as Doctor</button>
-                <button class="login-btn btn-pat" onclick="login('patient')">Login as Patient</button>
+                <p>Select your portal to proceed to login.</p>
+                <button class="auth-btn btn-doc" onclick="showLoginForm('doctor')">Doctor Portal</button>
+                <button class="auth-btn btn-pat" onclick="showLoginForm('patient')" style="margin-top: 15px;">Patient Portal</button>
             </div>
         </div>
 
-        <!-- MAIN DASHBOARD APP -->
+        <!-- SCREEN 2: LOGIN FORM -->
+        <div id="login-screen" class="auth-container" style="display: none;">
+            <div class="auth-card">
+                <h2 id="login-title">Portal Login</h2>
+                <p>Enter your credentials to access your secure workspace.</p>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="login-email" class="input-field" placeholder="name@medicore.in">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-pass" class="input-field" placeholder="••••••••">
+                </div>
+                <button class="auth-btn" id="login-submit-btn" onclick="handleLogin()">Sign In</button>
+                <div class="back-text" onclick="showSelectionScreen()">← Choose different portal</div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: MAIN DASHBOARD APP -->
         <div id="app-screen" style="display: none;">
             <header>
                 <div class="badge">Clinical Operations Platform</div>
@@ -218,18 +269,16 @@
             </div>
 
             <div class="metrics">
-                <div><div class="metric-val">2</div><div class="metric-label">Active Patients</div></div>
-                <div><div class="metric-val">2</div><div class="metric-label">Consultations Today</div></div>
-                <div><div class="metric-val">2</div><div class="metric-label">Open Balances</div></div>
+                <div><div class="metric-val" id="count-patients">2</div><div class="metric-label">Active Patients</div></div>
+                <div><div class="metric-val" id="count-appts">2</div><div class="metric-label">Consultations Today</div></div>
+                <div><div class="metric-val" id="count-bills">2</div><div class="metric-label">Open Balances</div></div>
                 <div><div class="metric-val">38</div><div class="metric-label">Beds Monitored</div></div>
             </div>
 
-            <!-- DASHBOARD HOME VIEW (CARDS) -->
+            <!-- DASHBOARD CARDS VIEW -->
             <div id="dashboard-view">
                 <div class="section-title">Dashboard / Modules</div>
-                <div class="grid" id="module-grid">
-                    <!-- Cards populated dynamically -->
-                </div>
+                <div class="grid" id="module-grid"></div>
             </div>
 
             <!-- PATIENT RECORDS VIEW -->
@@ -248,7 +297,7 @@
                             <th>Action Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="patient-table-body">
                         <tr>
                             <td>P-1001</td>
                             <td>Ananya Sharma</td>
@@ -269,9 +318,12 @@
                 </table>
             </div>
 
-            <!-- APPOINTMENTS VIEW (Patient only) -->
+            <!-- APPOINTMENTS VIEW -->
             <div id="view-appointments" class="detail-view">
-                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <div class="header-action-row">
+                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                    <button class="action-btn" onclick="addAppointment()">+ Add New Appointment</button>
+                </div>
                 <h2>Consultation & Appointment Schedule</h2>
                 <p style="color: var(--text-muted); font-size: 13px;">Real-time doctor appointment calendar, live consultation time slots, and queue management metrics.</p>
                 <table>
@@ -284,7 +336,7 @@
                             <th>Status Verification</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="appt-table-body">
                         <tr>
                             <td>APT-501</td>
                             <td>Ananya Sharma</td>
@@ -305,7 +357,10 @@
 
             <!-- BILLING VIEW -->
             <div id="view-billing" class="detail-view">
-                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <div class="header-action-row">
+                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                    <button class="action-btn" onclick="addInvoice()">+ Add New Invoice</button>
+                </div>
                 <h2>Billing & Prescriptions</h2>
                 <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.</p>
                 <table>
@@ -318,7 +373,7 @@
                             <th>Payment Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="billing-table-body">
                         <tr>
                             <td>INV-901</td>
                             <td>Ananya Sharma</td>
@@ -337,7 +392,7 @@
                 </table>
             </div>
 
-            <!-- ADMINISTRATION / STAFF VIEW (Doctor only) -->
+            <!-- ADMINISTRATION / STAFF VIEW -->
             <div id="view-administration" class="detail-view">
                 <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
                 <h2>Staff & Administration Roster</h2>
@@ -374,6 +429,7 @@
     </div>
 
     <script>
+        let currentRole = '';
         const modules = {
             doctor: [
                 { id: 'patients', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
@@ -387,15 +443,43 @@
             ]
         };
 
-        function login(role) {
+        function showLoginForm(role) {
+            currentRole = role;
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            
+            const title = role === 'doctor' ? 'Doctor Portal Login' : 'Patient Portal Login';
+            const btnClass = role === 'doctor' ? 'btn-doc' : 'btn-pat';
+            
+            document.getElementById('login-title').innerText = title;
+            const submitBtn = document.getElementById('login-submit-btn');
+            submitBtn.className = 'auth-btn ' + btnClass;
+            
+            // Prefill sample dummy email for convenience
+            document.getElementById('login-email').value = role === 'doctor' ? 'dr.ramesh@medicore.in' : 'ananya.sharma@gmail.com';
+            document.getElementById('login-pass').value = 'password123';
+        }
+
+        function showSelectionScreen() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('selection-screen').style.display = 'flex';
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            if(!email) {
+                alert('Please enter your email credentials.');
+                return;
+            }
+
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('role-display').innerText = role;
+            document.getElementById('role-display').innerText = currentRole;
             
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
             
-            modules[role].forEach(mod => {
+            modules[currentRole].forEach(mod => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => openView(mod.id);
@@ -412,7 +496,7 @@
 
         function logout() {
             document.getElementById('app-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('selection-screen').style.display = 'flex';
             goHome();
         }
 
@@ -425,6 +509,58 @@
         function goHome() {
             document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
             document.getElementById('dashboard-view').style.display = 'block';
+        }
+
+        // Add Appointment Dynamic Function (+ Button)
+        function addAppointment() {
+            const name = prompt("Enter Patient Name:");
+            if (!name) return;
+            const doctor = prompt("Enter Assigned Doctor:", "Dr. Ramesh Kumar");
+            const date = prompt("Enter Timestamp (e.g., 2026-06-08 02:00 PM):", "2026-06-08 10:00 AM");
+            
+            const tbody = document.getElementById('appt-table-body');
+            const newRow = document.createElement('tr');
+            const randomId = 'APT-' + Math.floor(100 + Math.random() * 900);
+            
+            newRow.innerHTML = `
+                <td>${randomId}</td>
+                <td>${name}</td>
+                <td>${doctor}</td>
+                <td>${date}</td>
+                <td><span class="status-badge status-conf">Confirmed</span></td>
+            `;
+            tbody.appendChild(newRow);
+            
+            // Update metric counter
+            const countEl = document.getElementById('count-appts');
+            countEl.innerText = parseInt(countEl.innerText) + 1;
+            alert("New appointment added successfully!");
+        }
+
+        // Add Invoice Dynamic Function (+ Button)
+        function addInvoice() {
+            const name = prompt("Enter Patient Name:");
+            if (!name) return;
+            const service = prompt("Enter Service Details:", "General Consultation & Diagnostics");
+            const amount = prompt("Enter Amount in Rupees (₹):", "₹2,500");
+            
+            const tbody = document.getElementById('billing-table-body');
+            const newRow = document.createElement('tr');
+            const randomId = 'INV-' + Math.floor(100 + Math.random() * 900);
+            
+            newRow.innerHTML = `
+                <td>${randomId}</td>
+                <td>${name}</td>
+                <td>${service}</td>
+                <td>${amount}</td>
+                <td><span class="status-badge status-conf">Pending Balance</span></td>
+            `;
+            tbody.appendChild(newRow);
+            
+            // Update metric counter
+            const countEl = document.getElementById('count-bills');
+            countEl.innerText = parseInt(countEl.innerText) + 1;
+            alert("New invoice generated successfully!");
         }
     </script>
 </body>
