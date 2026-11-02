@@ -113,7 +113,7 @@ function renderBilling() {
             <td class="p-3 font-semibold font-mono text-xs text-slate-500">${inv.id}</td>
             <td class="p-3 font-semibold text-slate-800">${inv.patient}</td>
             <td class="p-3 text-slate-600">${inv.items}</td>
-            <td class="p-3 font-bold text-slate-900">$${inv.amount.toFixed(2)}</td>
+            <td class="p-3 font-bold text-slate-900">$${Number(inv.amount).toFixed(2)}</td>
             <td class="p-3">${statusBadge}</td>
             <td class="p-3"><button onclick="viewBill('${inv.id}', '${inv.patient}', '${inv.items}', ${inv.amount}, '${inv.status}')" class="text-sky-600 hover:underline font-semibold text-xs bg-sky-50 px-2.5 py-1 rounded">View Invoice</button></td>
         `;
@@ -149,10 +149,15 @@ function applyPatientRestrictions() {
     const titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.innerText = "Patient Portal & Services";
     
-    // Hide Emergency Dispatch Card for patients
     const emergencyCard = document.getElementById('emergencyCard');
     if (emergencyCard) {
         emergencyCard.style.display = 'none';
+    }
+    
+    // Hide the "Add Patient Billing" button for patients
+    const addBillingBtn = document.getElementById('addBillingBtn');
+    if (addBillingBtn) {
+        addBillingBtn.style.display = 'none';
     }
     
     const navLinks = document.querySelectorAll('.tab-link');
@@ -280,6 +285,53 @@ function deleteAppointment(index) {
     }
 }
 
+// --- ADD BILLING MODAL & FEE MANAGEMENT ---
+function toggleAddBillingModal(show) {
+    const modal = document.getElementById('addBillingModal');
+    if (show) {
+        const selectEl = document.getElementById('billPatientName');
+        if (selectEl) {
+            selectEl.innerHTML = '<option value="">-- Choose Active Patient --</option>';
+            patients.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.name;
+                opt.text = `${p.name} (${p.id} - ${p.dept})`;
+                selectEl.appendChild(opt);
+            });
+        }
+        modal.classList.remove('hidden');
+    } else {
+        modal.classList.add('hidden');
+    }
+}
+
+function handleNewBilling(e) {
+    e.preventDefault();
+
+    const patientName = document.getElementById('billPatientName').value;
+    const services = document.getElementById('billServices').value;
+    const amount = parseFloat(document.getElementById('billAmount').value);
+    const status = document.getElementById('billStatus').value;
+
+    const randomInvId = '#INV-' + Math.floor(500 + Math.random() * 400);
+
+    const newInvoice = {
+        id: randomInvId,
+        patient: patientName,
+        items: services,
+        amount: amount,
+        status: status
+    };
+
+    invoices.unshift(newInvoice);
+    saveInvoices();
+    renderBilling();
+
+    toggleAddBillingModal(false);
+    e.target.reset();
+    alert('Patient billing fee added successfully and synced to patient records!');
+}
+
 function viewHistory(name, dept, history) {
     document.getElementById('historyModalTitle').innerText = "EMR File: " + name;
     document.getElementById('historyModalContent').innerHTML = `
@@ -299,7 +351,7 @@ function viewBill(invoiceId, patientName, items, amount, status) {
         <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
             <div class="flex justify-between text-sm"><strong>Patient Name:</strong> <span class="font-medium text-slate-800">${patientName}</span></div>
             <div class="flex justify-between text-sm"><strong>Services:</strong> <span class="text-right text-slate-600">${items}</span></div>
-            <div class="flex justify-between border-t border-slate-200 pt-3 font-bold text-lg text-slate-900"><span>Total Charge:</span> <span>$${amount.toFixed(2)}</span></div>
+            <div class="flex justify-between border-t border-slate-200 pt-3 font-bold text-lg text-slate-900"><span>Total Charge:</span> <span>$${Number(amount).toFixed(2)}</span></div>
             <div class="flex justify-between items-center pt-1"><strong>Status:</strong> <span>${statusBadge}</span></div>
         </div>
     `;

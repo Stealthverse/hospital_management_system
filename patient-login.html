@@ -21,8 +21,8 @@
 
         <form onsubmit="handlePatientLogin(event)" class="space-y-4">
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address / Name</label>
-                <input type="text" id="patientEmail" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="e.g., Sarah Connor">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Patient ID / Email / Name</label>
+                <input type="text" id="patientEmail" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="e.g., P-1001 or Sarah Connor">
             </div>
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
@@ -40,10 +40,17 @@
     <script>
         function handlePatientLogin(e) {
             e.preventDefault();
-            const nameInput = document.getElementById('patientEmail').value;
-            // Store role and patient name
+            const inputVal = document.getElementById('patientEmail').value.trim();
+            
+            // Format username storage (handles email splitting, or keeps Name/ID as-is)
+            let formattedName = inputVal;
+            if (inputVal.includes('@')) {
+                formattedName = inputVal.split('@')[0];
+            }
+
+            // Store role and patient name/ID identifier
             localStorage.setItem('userRole', 'patient');
-            localStorage.setItem('userName', nameInput.includes('@') ? nameInput.split('@')[0] : nameInput);
+            localStorage.setItem('userName', formattedName);
             
             alert('Patient login successful! Redirecting...');
             window.location.href = 'index.html';

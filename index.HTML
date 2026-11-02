@@ -90,6 +90,43 @@
         </div>
     </div>
 
+    <!-- Add Patient Billing Modal -->
+    <div id="addBillingModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-file-invoice-dollar text-sky-600 mr-2"></i>Create Patient Invoice</h3>
+                <button onclick="toggleAddBillingModal(false)" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleNewBilling(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Patient Name</label>
+                    <input type="text" id="billPatientName" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="e.g., John Doe">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Services & Prescriptions Breakdown</label>
+                    <input type="text" id="billServices" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="e.g., Cardiology Consultation, Lab Test">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Amount ($)</label>
+                        <input type="number" step="0.01" id="billAmount" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="e.g., 250.00">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Payment Status</label>
+                        <select id="billStatus" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm">
+                            <option value="Paid">Paid</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" onclick="toggleAddBillingModal(false)" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-medium">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-sky-600 text-white rounded-xl text-sm font-medium hover:bg-sky-700">Save Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- EMR Record Modal -->
     <div id="historyModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-slate-100">
@@ -209,7 +246,7 @@
                             <p class="text-xs text-slate-500 mb-4">Secure access to electronic medical records, test results, and admission histories.</p>
                             <button onclick="switchTab('patients')" class="text-emerald-600 text-xs font-bold hover:underline">View Directory &rarr;</button>
                         </div>
-                        <!-- Emergency Dispatch Card (Hidden for Patients, Visible for Doctors) -->
+                        <!-- Emergency Dispatch Card -->
                         <div id="emergencyCard" class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition">
                             <div class="bg-rose-50 text-rose-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-truck-medical"></i></div>
                             <h3 class="font-bold text-slate-900 text-base mb-1">Trauma & Emergency</h3>
@@ -335,7 +372,13 @@
                 <!-- TAB 5: BILLING -->
                 <section id="tab-billing" class="tab-content hidden space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
-                        <h3 class="font-bold text-slate-900 text-base mb-6">Billing & Itemized Invoices</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-slate-900 text-base">Billing & Itemized Invoices</h3>
+                            <button onclick="toggleAddBillingModal(true)" class="bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-sky-700 transition shadow-xs flex items-center space-x-2">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                <span>Add Patient Billing</span>
+                            </button>
+                        </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
