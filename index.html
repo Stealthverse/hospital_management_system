@@ -228,7 +228,7 @@
             <div id="dashboard-view">
                 <div class="section-title">Dashboard / Modules</div>
                 <div class="grid" id="module-grid">
-                    <!-- Cards will be populated dynamically based on role -->
+                    <!-- Cards populated dynamically -->
                 </div>
             </div>
 
@@ -251,17 +251,17 @@
                     <tbody>
                         <tr>
                             <td>P-1001</td>
-                            <td>Sarah Jenkins</td>
-                            <td>34 / F</td>
-                            <td>+1 (555) 234-5678</td>
+                            <td>Ananya Sharma</td>
+                            <td>28 / F</td>
+                            <td>+91 98480 22331</td>
                             <td>Hypertension Monitoring</td>
                             <td><span class="status-badge status-stable">Stable</span></td>
                         </tr>
                         <tr>
                             <td>P-1002</td>
-                            <td>Robert Fox</td>
-                            <td>45 / M</td>
-                            <td>+1 (555) 876-5432</td>
+                            <td>Rajesh Varma</td>
+                            <td>42 / M</td>
+                            <td>+91 97011 44556</td>
                             <td>Post-Operative Orthopedic</td>
                             <td><span class="status-badge status-stable">Recovering</span></td>
                         </tr>
@@ -287,15 +287,15 @@
                     <tbody>
                         <tr>
                             <td>APT-501</td>
-                            <td>Sarah Jenkins</td>
-                            <td>Dr. Emily Watson (Cardiology)</td>
+                            <td>Ananya Sharma</td>
+                            <td>Dr. Ramesh Kumar (Cardiology)</td>
                             <td>2026-06-07 10:30 AM</td>
                             <td><span class="status-badge status-conf">Confirmed</span></td>
                         </tr>
                         <tr>
                             <td>APT-502</td>
-                            <td>Robert Fox</td>
-                            <td>Dr. James Miller (Orthopedics)</td>
+                            <td>Rajesh Varma</td>
+                            <td>Dr. Priya Reddy (Orthopedics)</td>
                             <td>2026-06-07 11:45 AM</td>
                             <td><span class="status-badge status-conf">Checked In</span></td>
                         </tr>
@@ -321,16 +321,16 @@
                     <tbody>
                         <tr>
                             <td>INV-901</td>
-                            <td>Sarah Jenkins</td>
+                            <td>Ananya Sharma</td>
                             <td>Cardiology Consultation & Labs</td>
-                            <td>$250.00</td>
+                            <td>₹4,500</td>
                             <td><span class="status-badge status-stable">Paid</span></td>
                         </tr>
                         <tr>
                             <td>INV-902</td>
-                            <td>Robert Fox</td>
+                            <td>Rajesh Varma</td>
                             <td>Orthopedic Follow-up & X-Ray</td>
-                            <td>$400.00</td>
+                            <td>₹6,800</td>
                             <td><span class="status-badge status-conf">Pending Balance</span></td>
                         </tr>
                     </tbody>
@@ -355,14 +355,14 @@
                     <tbody>
                         <tr>
                             <td>DOC-201</td>
-                            <td>Dr. Emily Watson</td>
+                            <td>Dr. Ramesh Kumar</td>
                             <td>Cardiology</td>
                             <td>08:00 AM - 04:00 PM</td>
                             <td><span class="status-badge status-stable">On Duty</span></td>
                         </tr>
                         <tr>
                             <td>NUR-405</td>
-                            <td>Nurse Clara Oswald</td>
+                            <td>Nurse Swathi Rao</td>
                             <td>Emergency / ICU</td>
                             <td>02:00 PM - 10:00 PM</td>
                             <td><span class="status-badge status-conf">Active</span></td>
@@ -374,7 +374,6 @@
     </div>
 
     <script>
-        // Module definitions assigned to roles per user request
         const modules = {
             doctor: [
                 { id: 'patients', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
@@ -393,7 +392,6 @@
             document.getElementById('app-screen').style.display = 'block';
             document.getElementById('role-display').innerText = role;
             
-            // Render specific cards based on role
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
             
