@@ -3,51 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Login - Vanguard Health</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Doctor Login - HMS</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-900 font-sans antialiased text-slate-100 flex items-center justify-center min-h-screen">
-
-    <div class="bg-slate-800 p-8 rounded-3xl shadow-2xl max-w-md w-full border border-slate-700 mx-4">
-        <div class="text-center mb-6">
-            <div class="bg-teal-500/20 text-teal-400 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mx-auto mb-3 border border-teal-500/30">
-                <i class="fa-solid fa-user-doctor"></i>
+<body>
+    <div class="container">
+        <h1>Doctor Portal</h1>
+        <p>Enter your credentials to access your dashboard</p>
+        
+        <form onsubmit="event.preventDefault(); alert('Doctor login simulated successfully!');">
+            <div class="form-group">
+                <input type="email" placeholder="Doctor Email" required class="input-field">
             </div>
-            <h2 class="text-2xl font-black text-white">Physician Portal Login</h2>
-            <p class="text-xs text-slate-400 mt-1">Access secure hospital records and surgical schedules</p>
-        </div>
-
-        <form onsubmit="handleDoctorLogin(event)" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Doctor Name / License ID</label>
-                <input type="text" id="doctorName" required class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm" placeholder="Dr. Robert Smith">
+            <div class="form-group">
+                <input type="password" placeholder="Password" required class="input-field">
             </div>
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Secure Passcode</label>
-                <input type="password" required class="w-full p-3 bg-slate-900 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none text-sm" placeholder="••••••••">
-            </div>
-            <button type="submit" class="w-full bg-teal-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-teal-500 transition shadow-md">Physician Secure Login</button>
+            <button type="submit" class="btn btn-doctor" style="width: 100%;">Login</button>
         </form>
-
-        <div class="mt-6 text-center text-xs text-slate-400 space-y-2">
-            <p>New physician on staff? <a href="doctor-register.html" class="text-teal-400 font-bold hover:underline">Apply for credentials</a></p>
-            <p><a href="index.html" class="text-slate-500 hover:text-slate-300">&larr; Back to Main Website</a></p>
+        
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
         </div>
     </div>
-
-    <script>
-        function handleDoctorLogin(e) {
-            e.preventDefault();
-            const docName = document.getElementById('doctorName').value;
-            // Store role and doctor name
-            localStorage.setItem('userRole', 'doctor');
-            localStorage.setItem('userName', docName);
-
-            alert('Physician credentials verified. Accessing clinical dashboard...');
-            window.location.href = 'index.html';
-        }
-    </script>
 </body>
-</html> 
+</html>

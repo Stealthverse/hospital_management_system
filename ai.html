@@ -1,49 +1,24 @@
-<!-- ==========================================
-     Vanguard AI Assistant Floating Widget
-     ========================================== -->
-<div class="fixed bottom-6 right-6 z-50">
-    <button onclick="toggleAiAssistant()" class="bg-gradient-to-r from-sky-600 to-teal-600 text-white p-4 rounded-full shadow-2xl hover:scale-105 transition flex items-center justify-center space-x-2 group cursor-pointer">
-        <i class="fa-solid fa-robot text-xl"></i>
-        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-sm font-semibold px-0 group-hover:px-2">Vanguard AI Assistant</span>
-    </button>
-</div>
-
-<!-- AI Chat Drawer / Window -->
-<div id="aiAssistantModal" class="fixed bottom-24 right-6 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 hidden flex flex-col h-[480px] overflow-hidden">
-    <!-- Chat Header -->
-    <div class="bg-slate-900 text-white p-4 flex justify-between items-center border-b border-slate-800">
-        <div class="flex items-center space-x-3">
-            <div class="bg-sky-500/20 text-sky-400 p-2 rounded-xl border border-sky-500/30">
-                <i class="fa-solid fa-robot"></i>
-            </div>
-            <div>
-                <h4 class="font-bold text-sm">Vanguard AI Support</h4>
-                <p class="text-[10px] text-emerald-400 font-medium flex items-center"><i class="fa-solid fa-circle text-[6px] mr-1 animate-pulse"></i> Online for Patients & Doctors</p>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Hub - HMS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 600px;">
+        <h1>AI Assistant Hub</h1>
+        <p>Smart diagnostics and clinical summary support</p>
+        
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+            <p style="color: #38bdf8; margin: 0 0 10px 0;"><strong>System Status:</strong> AI Diagnostics Module Online</p>
+            <p style="color: #94a3b8; font-size: 14px; margin: 0;">Ready to parse patient triage data and assist with medical queries.</p>
         </div>
-        <button onclick="toggleAiAssistant()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-    </div>
 
-    <!-- Chat Body / Messages -->
-    <div id="aiChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/50 text-xs">
-        <div class="flex justify-start items-start space-x-2">
-            <div class="bg-sky-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] shrink-0 mt-1"><i class="fa-solid fa-robot"></i></div>
-            <div class="chat-bubble-ai px-4 py-2.5 rounded-2xl text-xs max-w-[80%] shadow-xs leading-relaxed">
-                Hello! I am your Vanguard AI assistant. How can I assist you today? You can ask about doctor appointments, EMR records, or emergency protocols.
-            </div>
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
         </div>
     </div>
-
-    <!-- Quick Prompt Pills -->
-    <div class="px-4 py-2 bg-white border-t border-slate-100 flex gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap">
-        <button onclick="sendAiMessage('Find a cardiologist')" class="bg-sky-50 text-sky-700 px-3 py-1 rounded-full hover:bg-sky-100 transition font-medium">🩺 Find Doctor</button>
-        <button onclick="sendAiMessage('How to view EMR records?')" class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full hover:bg-emerald-100 transition font-medium">📋 Patient EMR</button>
-        <button onclick="sendAiMessage('Emergency dispatch info')" class="bg-rose-50 text-rose-700 px-3 py-1 rounded-full hover:bg-rose-100 transition font-medium">🚨 Emergency</button>
-    </div>
-
-    <!-- Chat Input Form -->
-    <div class="p-3 bg-white border-t border-slate-200 flex items-center space-x-2">
-        <input type="text" id="aiUserInput" onkeydown="if(event.key==='Enter') sendAiMessage()" placeholder="Type your question here..." class="flex-1 p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-xs">
-        <button onclick="sendAiMessage()" class="bg-sky-600 text-white px-4 py-2.5 rounded-xl hover:bg-sky-700 transition text-xs font-semibold shadow-xs"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-</div>
+</body>
+</html>

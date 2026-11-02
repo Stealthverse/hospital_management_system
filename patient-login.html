@@ -3,58 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Login - Vanguard Health</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Patient Login - HMS</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-50 font-sans antialiased text-slate-800 flex items-center justify-center min-h-screen">
-
-    <div class="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border border-slate-200/80 mx-4">
-        <div class="text-center mb-6">
-            <div class="bg-sky-50 text-sky-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mx-auto mb-3 shadow-xs">
-                <i class="fa-solid fa-user-injured"></i>
+<body>
+    <div class="container">
+        <h1>Patient Portal</h1>
+        <p>Access your appointments and medical records</p>
+        
+        <form onsubmit="event.preventDefault(); alert('Patient login simulated successfully!');">
+            <div class="form-group">
+                <input type="email" placeholder="Patient Email" required class="input-field">
             </div>
-            <h2 class="text-2xl font-black text-slate-900">Patient Portal Login</h2>
-            <p class="text-xs text-slate-500 mt-1">Access your medical records, reports, and appointments</p>
-        </div>
-
-        <form onsubmit="handlePatientLogin(event)" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Patient ID / Email / Name</label>
-                <input type="text" id="patientEmail" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="e.g., P-1001 or Sarah Connor">
+            <div class="form-group">
+                <input type="password" placeholder="Password" required class="input-field">
             </div>
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
-                <input type="password" required class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-sm" placeholder="••••••••">
-            </div>
-            <button type="submit" class="w-full bg-sky-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-sky-700 transition shadow-sm">Sign In to Portal</button>
+            <button type="submit" class="btn btn-patient" style="width: 100%;">Login</button>
         </form>
-
-        <div class="mt-6 text-center text-xs text-slate-500 space-y-2">
-            <p>Don't have an account? <a href="patient-register.html" class="text-sky-600 font-bold hover:underline">Register here</a></p>
-            <p><a href="index.html" class="text-slate-400 hover:text-slate-600">&larr; Back to Main Website</a></p>
+        
+        <div class="back-link">
+            <a href="index.html">← Back to Home</a>
         </div>
     </div>
-
-    <script>
-        function handlePatientLogin(e) {
-            e.preventDefault();
-            const inputVal = document.getElementById('patientEmail').value.trim();
-            
-            // Format username storage (handles email splitting, or keeps Name/ID as-is)
-            let formattedName = inputVal;
-            if (inputVal.includes('@')) {
-                formattedName = inputVal.split('@')[0];
-            }
-
-            // Store role and patient name/ID identifier
-            localStorage.setItem('userRole', 'patient');
-            localStorage.setItem('userName', formattedName);
-            
-            alert('Patient login successful! Redirecting...');
-            window.location.href = 'index.html';
-        }
-    </script>
 </body>
 </html>
