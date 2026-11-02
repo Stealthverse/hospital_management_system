@@ -3,19 +3,431 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Management System - Portal</title>
-    <link rel="stylesheet" href="style.css">
+    <title>MediCore Intelligence System</title>
+    <style>
+        :root {
+            --bg-deep: #0b0f19;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --border-color: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-teal: #14b8a6;
+            --accent-blue: #38bdf8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Screen Styles */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+        }
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .login-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
+        .login-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-doc { background: #2563eb; color: white; }
+        .btn-pat { background: #059669; color: white; }
+        .login-btn:hover { opacity: 0.9; }
+
+        /* Dashboard Header */
+        header {
+            text-align: center;
+            padding: 30px 0 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .badge {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--accent-teal);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        h1 { font-size: 36px; margin: 10px 0; color: #ffffff; }
+        .subtitle { color: var(--text-muted); font-size: 14px; max-width: 600px; margin: 0 auto 20px auto; }
+        
+        /* Pulse Line Graphic */
+        .pulse-line {
+            height: 30px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 50' preserveAspectRatio='none'%3E%3Cpath d='M0,25 L200,25 L220,10 L240,40 L260,20 L280,30 L300,25 L600,25 L620,5 L640,45 L660,25 L1000,25' fill='none' stroke='%2314b8a6' stroke-width='2'/%3E%3C/svg%3E") center no-repeat;
+            background-size: 100% 100%;
+            margin: 15px 0;
+            opacity: 0.7;
+        }
+
+        /* Metrics Bar */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .metric-val { font-size: 18px; font-weight: bold; color: white; }
+        .metric-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+
+        /* Navigation / Role bar */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Modules Grid */
+        .section-title { font-size: 13px; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-teal);
+            transform: translateY(-2px);
+        }
+        .card h3 { margin-top: 0; color: white; font-size: 18px; }
+        .card p { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+        .card ul { padding-left: 16px; color: var(--text-muted); font-size: 13px; margin: 10px 0 0 0; }
+        .card li { margin-bottom: 4px; }
+
+        /* Detailed View Tables */
+        .detail-view {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 12px;
+            display: none;
+        }
+        .back-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        th { color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-stable { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
+        .status-conf { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Hospital Management System</h1>
-        <p>Select your portal to continue</p>
-        
-        <div class="btn-group">
-            <a href="doctor-login.html" class="btn btn-doctor">Doctor Portal</a>
-            <a href="patient-login.html" class="btn btn-patient">Patient Portal</a>
-            <a href="ai.html" class="btn btn-ai">AI Assistant Hub</a>
+
+    <div class="wrapper">
+        <!-- LOGIN SCREEN -->
+        <div id="login-screen">
+            <div class="login-card">
+                <h2>MediCore System</h2>
+                <p>Select your portal role to access restricted clinical workflows.</p>
+                <button class="login-btn btn-doc" onclick="login('doctor')">Login as Doctor</button>
+                <button class="login-btn btn-pat" onclick="login('patient')">Login as Patient</button>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD APP -->
+        <div id="app-screen" style="display: none;">
+            <header>
+                <div class="badge">Clinical Operations Platform</div>
+                <h1>MediCore Intelligence System</h1>
+                <div class="subtitle">A single coordination workspace for patient records, clinical schedules, and financial operations across the hospital.</div>
+                <div class="pulse-line"></div>
+            </header>
+
+            <div class="top-nav">
+                <div>Logged in as: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);"></strong></div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="metrics">
+                <div><div class="metric-val">2</div><div class="metric-label">Active Patients</div></div>
+                <div><div class="metric-val">2</div><div class="metric-label">Consultations Today</div></div>
+                <div><div class="metric-val">2</div><div class="metric-label">Open Balances</div></div>
+                <div><div class="metric-val">38</div><div class="metric-label">Beds Monitored</div></div>
+            </div>
+
+            <!-- DASHBOARD HOME VIEW (CARDS) -->
+            <div id="dashboard-view">
+                <div class="section-title">Dashboard / Modules</div>
+                <div class="grid" id="module-grid">
+                    <!-- Cards will be populated dynamically based on role -->
+                </div>
+            </div>
+
+            <!-- PATIENT RECORDS VIEW -->
+            <div id="view-patients" class="detail-view">
+                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <h2>Patient Records Management</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Active registry directory tracking authenticated patients, vitals, and integrated Electronic Health Records (EHR).</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Name</th>
+                            <th>Age / Gender</th>
+                            <th>Contact</th>
+                            <th>Primary Condition</th>
+                            <th>Action Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P-1001</td>
+                            <td>Sarah Jenkins</td>
+                            <td>34 / F</td>
+                            <td>+1 (555) 234-5678</td>
+                            <td>Hypertension Monitoring</td>
+                            <td><span class="status-badge status-stable">Stable</span></td>
+                        </tr>
+                        <tr>
+                            <td>P-1002</td>
+                            <td>Robert Fox</td>
+                            <td>45 / M</td>
+                            <td>+1 (555) 876-5432</td>
+                            <td>Post-Operative Orthopedic</td>
+                            <td><span class="status-badge status-stable">Recovering</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- APPOINTMENTS VIEW (Patient only) -->
+            <div id="view-appointments" class="detail-view">
+                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <h2>Consultation & Appointment Schedule</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Real-time doctor appointment calendar, live consultation time slots, and queue management metrics.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Appt ID</th>
+                            <th>Patient Name</th>
+                            <th>Assigned Doctor</th>
+                            <th>Timestamp</th>
+                            <th>Status Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>APT-501</td>
+                            <td>Sarah Jenkins</td>
+                            <td>Dr. Emily Watson (Cardiology)</td>
+                            <td>2026-06-07 10:30 AM</td>
+                            <td><span class="status-badge status-conf">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>APT-502</td>
+                            <td>Robert Fox</td>
+                            <td>Dr. James Miller (Orthopedics)</td>
+                            <td>2026-06-07 11:45 AM</td>
+                            <td><span class="status-badge status-conf">Checked In</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BILLING VIEW -->
+            <div id="view-billing" class="detail-view">
+                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <h2>Billing & Prescriptions</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Patient Name</th>
+                            <th>Service Details</th>
+                            <th>Amount</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>INV-901</td>
+                            <td>Sarah Jenkins</td>
+                            <td>Cardiology Consultation & Labs</td>
+                            <td>$250.00</td>
+                            <td><span class="status-badge status-stable">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>INV-902</td>
+                            <td>Robert Fox</td>
+                            <td>Orthopedic Follow-up & X-Ray</td>
+                            <td>$400.00</td>
+                            <td><span class="status-badge status-conf">Pending Balance</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ADMINISTRATION / STAFF VIEW (Doctor only) -->
+            <div id="view-administration" class="detail-view">
+                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <h2>Staff & Administration Roster</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Optimize comprehensive facility operations through strategic resource allocation and staff shift management.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Staff ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Shift Timing</th>
+                            <th>Duty Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DOC-201</td>
+                            <td>Dr. Emily Watson</td>
+                            <td>Cardiology</td>
+                            <td>08:00 AM - 04:00 PM</td>
+                            <td><span class="status-badge status-stable">On Duty</span></td>
+                        </tr>
+                        <tr>
+                            <td>NUR-405</td>
+                            <td>Nurse Clara Oswald</td>
+                            <td>Emergency / ICU</td>
+                            <td>02:00 PM - 10:00 PM</td>
+                            <td><span class="status-badge status-conf">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Module definitions assigned to roles per user request
+        const modules = {
+            doctor: [
+                { id: 'patients', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
+                { id: 'billing', title: 'Billing & Prescriptions', desc: 'Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.', list: ['Digital Prescriptions', 'Billing Processing', 'Insurance Integration'] },
+                { id: 'administration', title: 'Staff & Administration', desc: 'Optimize comprehensive facility operations through strategic resource allocation and staff shift management.', list: ['Staff Shift Rosters', 'Resource Allocation', 'Patient Care Optimization'] }
+            ],
+            patient: [
+                { id: 'patients', title: 'Patient Records', desc: 'View your personal medical logs, health demographics, and clinical history safely.', list: ['My Electronic Health Records', 'Personal History Access', 'Demographic Details'] },
+                { id: 'appointments', title: 'Appointments', desc: 'Check available consultation schedules, secure booking slots, and track appointment statuses.', list: ['Consultation Scheduling', 'Doctor Availability Check', 'Real-time Status Tracking'] },
+                { id: 'billing', title: 'Billing & Prescriptions', desc: 'Review your itemized hospital bills, payment statuses, and active digital prescriptions.', list: ['Prescription Downloads', 'Invoice Payment Status', 'Itemized Statement'] }
+            ]
+        };
+
+        function login(role) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+            document.getElementById('role-display').innerText = role;
+            
+            // Render specific cards based on role
+            const grid = document.getElementById('module-grid');
+            grid.innerHTML = '';
+            
+            modules[role].forEach(mod => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openView(mod.id);
+                card.innerHTML = `
+                    <h3>${mod.title}</h3>
+                    <p>${mod.desc}</p>
+                    <ul>
+                        ${mod.list.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function logout() {
+            document.getElementById('app-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            goHome();
+        }
+
+        function openView(viewId) {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
+            document.getElementById('view-' + viewId).style.display = 'block';
+        }
+
+        function goHome() {
+            document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
+            document.getElementById('dashboard-view').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
