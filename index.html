@@ -90,57 +90,6 @@
             padding: 40px 20px;
         }
 
-        /* Auth & Login Screens */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 70vh;
-        }
-        .auth-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 40px;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-        .auth-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
-        .auth-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
-        
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .input-group label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; }
-        .input-field {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-deep);
-            color: white;
-            box-sizing: border-box;
-        }
-        .input-field:focus { outline: none; border-color: var(--accent-blue); }
-
-        .auth-btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            font-weight: bold;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .btn-doc { background: #2563eb; color: white; }
-        .btn-pat { background: #059669; color: white; }
-        .auth-btn:hover { opacity: 0.9; }
-        .back-text { margin-top: 15px; font-size: 13px; color: var(--accent-blue); cursor: pointer; display: inline-block; }
-
         /* Hero / Overview Section */
         .hero-section {
             text-align: left;
@@ -176,6 +125,60 @@
             margin: 25px 0 35px 0;
             opacity: 0.8;
         }
+
+        /* Login Modal Card Overlay */
+        .login-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(14, 19, 31, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .auth-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
+        .auth-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+        
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-deep);
+            color: white;
+            box-sizing: border-box;
+        }
+        .input-field:focus { outline: none; border-color: var(--accent-blue); }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-doc { background: #2563eb; color: white; }
+        .btn-pat { background: #059669; color: white; }
+        .auth-btn:hover { opacity: 0.9; }
+        .back-text { margin-top: 15px; font-size: 13px; color: var(--accent-blue); cursor: pointer; display: inline-block; }
 
         /* Metric Grid Cards */
         .grid {
@@ -270,7 +273,7 @@
     <!-- TOP NAVIGATION HEADER -->
     <div class="navbar">
         <div class="nav-left">
-            <div class="logo" onclick="showSelectionScreen()">Medi<span>Core</span></div>
+            <div class="logo" onclick="goHome()">Medi<span>Core</span></div>
             <button class="nav-item" onclick="openNavInfo('discover')">DISCOVER MEDICORE</button>
             <button class="nav-item" onclick="openNavInfo('hospitals')">FIND HOSPITAL</button>
             <button class="nav-item" onclick="openNavInfo('services')">MEDICAL SERVICES</button>
@@ -282,37 +285,27 @@
         </div>
     </div>
 
+    <!-- LOGIN MODAL OVERLAY -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="auth-card">
+            <h2 id="login-title">Portal Login</h2>
+            <p>Enter your credentials to access your secure workspace.</p>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="login-email" class="input-field" placeholder="name@medicore.in">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-pass" class="input-field" placeholder="••••••••">
+            </div>
+            <button class="auth-btn" id="login-submit-btn" onclick="handleLogin()">Sign In</button>
+            <div class="back-text" onclick="closeLoginModal()">Cancel / Back</div>
+        </div>
+    </div>
+
     <div class="wrapper">
-        <!-- SCREEN 1: PORTAL SELECTION -->
-        <div id="selection-screen" class="auth-container">
-            <div class="auth-card">
-                <h2>MediCore System</h2>
-                <p>Select your portal to proceed to login.</p>
-                <button class="auth-btn btn-doc" onclick="showLoginForm('doctor')">Doctor Portal Login</button>
-                <button class="auth-btn btn-pat" onclick="showLoginForm('patient')" style="margin-top: 15px;">Patient Portal Login</button>
-            </div>
-        </div>
-
-        <!-- SCREEN 2: LOGIN FORM -->
-        <div id="login-screen" class="auth-container" style="display: none;">
-            <div class="auth-card">
-                <h2 id="login-title">Portal Login</h2>
-                <p>Enter your credentials to access your secure workspace.</p>
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="login-email" class="input-field" placeholder="name@medicore.in">
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="login-pass" class="input-field" placeholder="••••••••">
-                </div>
-                <button class="auth-btn" id="login-submit-btn" onclick="handleLogin()">Sign In</button>
-                <div class="back-text" onclick="showSelectionScreen()">← Choose different portal</div>
-            </div>
-        </div>
-
-        <!-- SCREEN 3: MAIN DASHBOARD APP (Hidden until login) -->
-        <div id="app-screen" style="display: none;">
+        <!-- MAIN DASHBOARD CONTENT -->
+        <div id="app-screen">
             
             <div class="hero-section">
                 <div class="hero-badge">CLINICAL OPERATIONS PLATFORM</div>
@@ -321,9 +314,9 @@
                 <div class="pulse-line"></div>
             </div>
 
-            <!-- ACTIVE ROLE BANNER & LOGOUT -->
+            <!-- ACTIVE ROLE BANNER -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px;">
-                <div>Logged in as Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);"></strong></div>
+                <div>Active View Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);">DOCTOR</strong> (Secured)</div>
                 <button onclick="logout()" style="background: #dc2626; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;">Logout</button>
             </div>
 
@@ -488,7 +481,9 @@
     </div>
 
     <script>
-        let currentRole = '';
+        let currentRole = 'doctor';
+        let isLoggedIn = false;
+
         const modules = {
             doctor: [
                 { id: 'patients', stat: '2 Active', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
@@ -517,18 +512,8 @@
             }
         };
 
-        function showSelectionScreen() {
-            document.getElementById('app-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('selection-screen').style.display = 'flex';
-        }
-
         function showLoginForm(role) {
             currentRole = role;
-            document.getElementById('selection-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-            
             const title = role === 'doctor' ? 'Doctor Portal Login' : 'Patient Portal Login';
             const btnClass = role === 'doctor' ? 'btn-doc' : 'btn-pat';
             
@@ -538,6 +523,12 @@
             
             document.getElementById('login-email').value = role === 'doctor' ? 'dr.ramesh@medicore.in' : 'ananya.sharma@gmail.com';
             document.getElementById('login-pass').value = 'password123';
+            
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-overlay').style.display = 'none';
         }
 
         function handleLogin() {
@@ -547,15 +538,17 @@
                 return;
             }
 
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('selection-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('role-display').innerText = currentRole;
-            
+            isLoggedIn = true;
+            closeLoginModal();
+            renderDashboard(currentRole);
+        }
+
+        function renderDashboard(role) {
+            document.getElementById('role-display').innerText = role;
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
             
-            modules[currentRole].forEach(mod => {
+            modules[role].forEach(mod => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => openView(mod.id);
@@ -573,11 +566,16 @@
         }
 
         function logout() {
-            document.getElementById('app-screen').style.display = 'none';
-            showSelectionScreen();
+            isLoggedIn = false;
+            showLoginForm('doctor');
         }
 
         function openNavInfo(key) {
+            if(!isLoggedIn) {
+                alert('Please log into a portal first to view detailed system sections.');
+                showLoginForm('doctor');
+                return;
+            }
             document.getElementById('dashboard-view').style.display = 'none';
             document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
             
@@ -639,6 +637,12 @@
             tbody.appendChild(newRow);
             alert("New invoice generated successfully!");
         }
+
+        // On load, show login modal immediately while background page layout is preserved
+        window.onload = () => {
+            renderDashboard('doctor');
+            showLoginForm('doctor');
+        };
     </script>
 </body>
 </html>
