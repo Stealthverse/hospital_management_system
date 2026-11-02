@@ -90,6 +90,57 @@
             padding: 40px 20px;
         }
 
+        /* Auth & Login Screens */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+        }
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .auth-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
+        .auth-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+        
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-deep);
+            color: white;
+            box-sizing: border-box;
+        }
+        .input-field:focus { outline: none; border-color: var(--accent-blue); }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-doc { background: #2563eb; color: white; }
+        .btn-pat { background: #059669; color: white; }
+        .auth-btn:hover { opacity: 0.9; }
+        .back-text { margin-top: 15px; font-size: 13px; color: var(--accent-blue); cursor: pointer; display: inline-block; }
+
         /* Hero / Overview Section */
         .hero-section {
             text-align: left;
@@ -219,21 +270,49 @@
     <!-- TOP NAVIGATION HEADER -->
     <div class="navbar">
         <div class="nav-left">
-            <div class="logo" onclick="goHome()">Medi<span>Core</span></div>
+            <div class="logo" onclick="showSelectionScreen()">Medi<span>Core</span></div>
             <button class="nav-item" onclick="openNavInfo('discover')">DISCOVER MEDICORE</button>
             <button class="nav-item" onclick="openNavInfo('hospitals')">FIND HOSPITAL</button>
             <button class="nav-item" onclick="openNavInfo('services')">MEDICAL SERVICES</button>
         </div>
         <div class="nav-right">
             <div class="emergency-pill">📞 EMERGENCY 1066</div>
-            <button class="auth-badge-btn" onclick="switchRole('doctor')">Doctor Portal</button>
-            <button class="auth-badge-btn" onclick="switchRole('patient')" style="background: #059669; color: white; border: none;">Patient Portal</button>
+            <button class="auth-badge-btn" onclick="showLoginForm('doctor')">Doctor Portal</button>
+            <button class="auth-badge-btn" onclick="showLoginForm('patient')" style="background: #059669; color: white; border: none;">Patient Portal</button>
         </div>
     </div>
 
     <div class="wrapper">
-        <!-- MAIN DASHBOARD APP -->
-        <div id="app-screen">
+        <!-- SCREEN 1: PORTAL SELECTION -->
+        <div id="selection-screen" class="auth-container">
+            <div class="auth-card">
+                <h2>MediCore System</h2>
+                <p>Select your portal to proceed to login.</p>
+                <button class="auth-btn btn-doc" onclick="showLoginForm('doctor')">Doctor Portal Login</button>
+                <button class="auth-btn btn-pat" onclick="showLoginForm('patient')" style="margin-top: 15px;">Patient Portal Login</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: LOGIN FORM -->
+        <div id="login-screen" class="auth-container" style="display: none;">
+            <div class="auth-card">
+                <h2 id="login-title">Portal Login</h2>
+                <p>Enter your credentials to access your secure workspace.</p>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="login-email" class="input-field" placeholder="name@medicore.in">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-pass" class="input-field" placeholder="••••••••">
+                </div>
+                <button class="auth-btn" id="login-submit-btn" onclick="handleLogin()">Sign In</button>
+                <div class="back-text" onclick="showSelectionScreen()">← Choose different portal</div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: MAIN DASHBOARD APP (Hidden until login) -->
+        <div id="app-screen" style="display: none;">
             
             <div class="hero-section">
                 <div class="hero-badge">CLINICAL OPERATIONS PLATFORM</div>
@@ -242,10 +321,10 @@
                 <div class="pulse-line"></div>
             </div>
 
-            <!-- ACTIVE ROLE BANNER -->
+            <!-- ACTIVE ROLE BANNER & LOGOUT -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px;">
-                <div>Active View Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);">DOCTOR</strong></div>
-                <div style="font-size: 13px; color: var(--text-muted);">Switch views using top-right portal buttons</div>
+                <div>Logged in as Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);"></strong></div>
+                <button onclick="logout()" style="background: #dc2626; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;">Logout</button>
             </div>
 
             <!-- DASHBOARD CARDS VIEW -->
@@ -409,7 +488,7 @@
     </div>
 
     <script>
-        let currentRole = 'doctor';
+        let currentRole = '';
         const modules = {
             doctor: [
                 { id: 'patients', stat: '2 Active', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
@@ -438,13 +517,45 @@
             }
         };
 
-        function switchRole(role) {
+        function showSelectionScreen() {
+            document.getElementById('app-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('selection-screen').style.display = 'flex';
+        }
+
+        function showLoginForm(role) {
             currentRole = role;
-            document.getElementById('role-display').innerText = role;
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            
+            const title = role === 'doctor' ? 'Doctor Portal Login' : 'Patient Portal Login';
+            const btnClass = role === 'doctor' ? 'btn-doc' : 'btn-pat';
+            
+            document.getElementById('login-title').innerText = title;
+            const submitBtn = document.getElementById('login-submit-btn');
+            submitBtn.className = 'auth-btn ' + btnClass;
+            
+            document.getElementById('login-email').value = role === 'doctor' ? 'dr.ramesh@medicore.in' : 'ananya.sharma@gmail.com';
+            document.getElementById('login-pass').value = 'password123';
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            if(!email) {
+                alert('Please enter your email credentials.');
+                return;
+            }
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+            document.getElementById('role-display').innerText = currentRole;
+            
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
             
-            modules[role].forEach(mod => {
+            modules[currentRole].forEach(mod => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => openView(mod.id);
@@ -459,6 +570,11 @@
                 grid.appendChild(card);
             });
             goHome();
+        }
+
+        function logout() {
+            document.getElementById('app-screen').style.display = 'none';
+            showSelectionScreen();
         }
 
         function openNavInfo(key) {
@@ -523,11 +639,6 @@
             tbody.appendChild(newRow);
             alert("New invoice generated successfully!");
         }
-
-        // Initialize default view as Doctor on load
-        window.onload = () => {
-            switchRole('doctor');
-        };
     </script>
 </body>
 </html>
