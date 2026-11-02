@@ -48,6 +48,10 @@
             cursor: pointer;
             text-decoration: none;
             transition: color 0.2s;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 0;
         }
         .nav-item:hover { color: var(--accent-blue); }
         .logo {
@@ -57,6 +61,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
         .logo span { color: var(--accent-teal); }
         .emergency-pill {
@@ -214,10 +219,10 @@
     <!-- TOP NAVIGATION HEADER -->
     <div class="navbar">
         <div class="nav-left">
-            <div class="logo">Medi<span>Core</span></div>
-            <a class="nav-item">DISCOVER MEDICORE</a>
-            <a class="nav-item">FIND HOSPITAL</a>
-            <a class="nav-item">MEDICAL SERVICES</a>
+            <div class="logo" onclick="goHome()">Medi<span>Core</span></div>
+            <button class="nav-item" onclick="openNavInfo('discover')">DISCOVER MEDICORE</button>
+            <button class="nav-item" onclick="openNavInfo('hospitals')">FIND HOSPITAL</button>
+            <button class="nav-item" onclick="openNavInfo('services')">MEDICAL SERVICES</button>
         </div>
         <div class="nav-right">
             <div class="emergency-pill">📞 EMERGENCY 1066</div>
@@ -247,6 +252,13 @@
             <div id="dashboard-view">
                 <div style="font-size: 13px; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase;">Dashboard / Authorized Modules</div>
                 <div class="grid" id="module-grid"></div>
+            </div>
+
+            <!-- DYNAMIC NAVBAR INFO VIEW -->
+            <div id="view-nav-info" class="detail-view">
+                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <h2 id="nav-info-title" style="margin-top: 20px;">Information Portal</h2>
+                <p id="nav-info-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-top: 10px;"></p>
             </div>
 
             <!-- PATIENT RECORDS VIEW -->
@@ -397,6 +409,7 @@
     </div>
 
     <script>
+        let currentRole = 'doctor';
         const modules = {
             doctor: [
                 { id: 'patients', stat: '2 Active', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
@@ -410,7 +423,23 @@
             ]
         };
 
+        const navContent = {
+            discover: {
+                title: "Discover MediCore Intelligence System",
+                desc: "MediCore is an enterprise-grade clinical operations platform engineered to unify patient records, appointment scheduling, and automated billing workflows. Designed with robust localization for Indian healthcare networks, it ensures seamless role-based synchronization between clinical staff and patients."
+            },
+            hospitals: {
+                title: "Find a MediCore Facility Near You",
+                desc: "Explore our premier network locations across major metropolitan and regional hubs in India, including Vijayawada (Governorpet & NTR Complex), Hyderabad, and Visakhapatnam. All facilities feature 24/7 emergency trauma care and advanced diagnostic laboratories."
+            },
+            services: {
+                title: "Comprehensive Medical Services",
+                desc: "We offer multi-specialty clinical departments including Cardiology, Orthopedics, Emergency & Critical Care ICU, Neurology, and Pediatrics, backed by real-time Electronic Health Record (EHR) management and digital prescription dispatch."
+            }
+        };
+
         function switchRole(role) {
+            currentRole = role;
             document.getElementById('role-display').innerText = role;
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
@@ -430,6 +459,16 @@
                 grid.appendChild(card);
             });
             goHome();
+        }
+
+        function openNavInfo(key) {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
+            
+            const info = navContent[key];
+            document.getElementById('nav-info-title').innerText = info.title;
+            document.getElementById('nav-info-desc').innerText = info.desc;
+            document.getElementById('view-nav-info').style.display = 'block';
         }
 
         function openView(viewId) {
