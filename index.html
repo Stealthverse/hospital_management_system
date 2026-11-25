@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediCore Intelligence System - Review 1</title>
+    <title>MediCore Intelligence System</title>
     <style>
         :root {
             --bg-deep: #0e131f;
@@ -179,7 +179,7 @@
         /* Metric Grid Cards */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 24px;
             margin-bottom: 40px;
         }
@@ -190,6 +190,7 @@
             border-radius: 16px;
             cursor: pointer;
             transition: all 0.25s ease;
+            position: relative;
         }
         .card:hover {
             background: var(--bg-card-hover);
@@ -197,7 +198,20 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 30px -10px rgba(20, 184, 166, 0.2);
         }
-        .card-stat { font-size: 32px; font-weight: bold; color: var(--accent-teal); margin-bottom: 8px; }
+        .doc-tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+        .card-stat { font-size: 28px; font-weight: bold; color: var(--accent-teal); margin-bottom: 8px; }
         .card h3 { margin: 0 0 10px 0; color: white; font-size: 20px; }
         .card p { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 0; }
         .card ul { padding-left: 16px; color: var(--text-muted); font-size: 13px; margin: 15px 0 0 0; }
@@ -216,6 +230,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .search-bar {
             padding: 8px 14px;
@@ -261,6 +277,26 @@
         .status-conf { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
         .status-paid { background: rgba(16, 185, 129, 0.15); color: #34d399; }
         .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+        /* Interactive Bed Grid */
+        .bed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .bed-box {
+            background: var(--bg-deep);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .bed-box:hover { transform: translateY(-2px); border-color: var(--accent-blue); }
+        .bed-available { border-left: 4px solid #10b981; }
+        .bed-occupied { border-left: 4px solid #ef4444; }
+        .bed-cleaning { border-left: 4px solid #f59e0b; }
     </style>
 </head>
 <body>
@@ -327,10 +363,10 @@
             </div>
             <div class="input-group">
                 <label>Appointment Timestamp</label>
-                <input type="text" id="appt-time" class="input-field" value="2026-06-08 10:00 AM">
+                <input type="text" id="appt-time" class="input-field" value="2026-11-26 10:00 AM">
             </div>
             <button class="modal-submit-btn btn-doc" onclick="saveNewAppointment()">Confirm & Schedule</button>
-            <button class="back-text" onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
@@ -352,7 +388,29 @@
                 <input type="text" id="inv-amount" class="input-field" value="₹3,500">
             </div>
             <button class="modal-submit-btn btn-pat" onclick="saveNewInvoice()">Generate Invoice</button>
-            <button class="back-text" onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- DOCTOR-ONLY: DIGITAL PRESCRIPTION MODAL -->
+    <div id="modal-rx" class="modal-overlay" style="display: none;">
+        <div class="custom-modal-card">
+            <h2>Issue Digital E-Prescription</h2>
+            <p>Doctor-authorized clinical medication order.</p>
+            <div class="input-group">
+                <label>Patient Name</label>
+                <input type="text" id="rx-patient" class="input-field" placeholder="e.g. Ananya Sharma">
+            </div>
+            <div class="input-group">
+                <label>Medication & Dosage</label>
+                <input type="text" id="rx-meds" class="input-field" placeholder="e.g. Amlodipine 5mg (1-0-0 after food)">
+            </div>
+            <div class="input-group">
+                <label>Clinical Notes / Follow-up</label>
+                <input type="text" id="rx-notes" class="input-field" value="Monitor BP daily; review in 14 days">
+            </div>
+            <button class="modal-submit-btn btn-doc" onclick="saveNewPrescription()">Save & Issue Rx</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
@@ -436,10 +494,10 @@
                 <div class="header-action-row">
                     <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
                     <input type="text" id="billing-search" class="search-bar" placeholder="Search invoices..." onkeyup="filterBillingTable()">
-                    <button class="action-btn" onclick="openInvoiceModal()">+ Add New Invoice</button>
+                    <button class="action-btn" id="btn-add-invoice" onclick="openInvoiceModal()">+ Add New Invoice</button>
                 </div>
-                <h2>Billing & Prescriptions</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions. Click status badges to toggle payment state.</p>
+                <h2>Billing & Financial Ledger</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions.</p>
                 <table>
                     <thead>
                         <tr>
@@ -454,11 +512,11 @@
                 </table>
             </div>
 
-            <!-- ADMINISTRATION / STAFF VIEW -->
+            <!-- DOCTOR-ONLY PANEL 1: STAFF & ADMINISTRATION -->
             <div id="view-administration" class="detail-view">
                 <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                <h2 style="margin-top: 20px;">Staff & Administration Roster</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Optimize comprehensive facility operations through strategic resource allocation and staff shift management.</p>
+                <h2 style="margin-top: 20px;">Staff & Administration Roster (Doctor / Admin Only)</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Confidential clinical roster and duty shift allocations.</p>
                 <table>
                     <thead>
                         <tr>
@@ -471,18 +529,75 @@
                     </thead>
                     <tbody>
                         <tr><td>DOC-201</td><td>Dr. Ramesh Kumar</td><td>Cardiology</td><td>08:00 AM - 04:00 PM</td><td><span class="status-badge status-stable">On Duty</span></td></tr>
+                        <tr><td>DOC-204</td><td>Dr. Priya Reddy</td><td>Orthopedics</td><td>10:00 AM - 06:00 PM</td><td><span class="status-badge status-stable">On Duty</span></td></tr>
                         <tr><td>NUR-405</td><td>Nurse Swathi Rao</td><td>Emergency / ICU</td><td>02:00 PM - 10:00 PM</td><td><span class="status-badge status-conf">Active</span></td></tr>
                     </tbody>
                 </table>
             </div>
+
+            <!-- DOCTOR-ONLY PANEL 2: ICU & WARD BED OCCUPANCY -->
+            <div id="view-beds" class="detail-view">
+                <div class="header-action-row">
+                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                    <span style="font-size: 12px; color: var(--text-muted);">Click any bed card to toggle status (Available → Occupied → Cleaning)</span>
+                </div>
+                <h2>Live ICU & Ward Bed Occupancy Monitor</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Restricted clinical command view for real-time inpatient ward and critical care bed allocation.</p>
+                <div class="bed-grid" id="bed-grid-container"></div>
+            </div>
+
+            <!-- DOCTOR-ONLY PANEL 3: DIGITAL E-PRESCRIPTION PAD -->
+            <div id="view-prescriptions" class="detail-view">
+                <div class="header-action-row">
+                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                    <button class="action-btn" onclick="openRxModal()">+ Write New E-Prescription</button>
+                </div>
+                <h2>Digital Prescription & E-Rx Console</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Issue verified clinical prescriptions directly to pharmacy & patient records.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rx ID</th>
+                            <th>Patient Name</th>
+                            <th>Prescribed Medication & Dosage</th>
+                            <th>Doctor Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rx-table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- DOCTOR-ONLY PANEL 4: DIAGNOSTICS & LAB REPORTS QUEUE -->
+            <div id="view-diagnostics" class="detail-view">
+                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                <h2 style="margin-top: 20px;">Lab & Diagnostic Reports Queue</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Review and verify pathology, ECG, and radiology results before releasing to patient portals.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lab ID</th>
+                            <th>Patient</th>
+                            <th>Diagnostic Test</th>
+                            <th>Key Finding</th>
+                            <th>Verification Status (Click to Approve)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lab-table-body"></tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
     <script>
         let currentRole = 'doctor';
-        let authMode = 'signin'; // 'signin' or 'signup'
+        let authMode = 'signin';
 
-        // LocalStorage Initialization for Hackathon Review 1 persistence
+        // Views strictly restricted to Doctor Portal
+        const doctorOnlyViews = ['administration', 'beds', 'prescriptions', 'diagnostics'];
+
+        // Initialize LocalStorage Data
         if (!localStorage.getItem('medicore_patients')) {
             localStorage.setItem('medicore_patients', JSON.stringify([
                 { id: 'P-1001', name: 'Ananya Sharma', ageGender: '28 / F', contact: '+91 98480 22331', condition: 'Hypertension Monitoring', status: 'Stable' },
@@ -492,8 +607,8 @@
 
         if (!localStorage.getItem('medicore_appointments')) {
             localStorage.setItem('medicore_appointments', JSON.stringify([
-                { id: 'APT-501', name: 'Ananya Sharma', doctor: 'Dr. Ramesh Kumar (Cardiology)', time: '2026-06-07 10:30 AM', status: 'Confirmed' },
-                { id: 'APT-502', name: 'Rajesh Varma', doctor: 'Dr. Priya Reddy (Orthopedics)', time: '2026-06-07 11:45 AM', status: 'Checked In' }
+                { id: 'APT-501', name: 'Ananya Sharma', doctor: 'Dr. Ramesh Kumar (Cardiology)', time: '2026-11-25 10:30 AM', status: 'Confirmed' },
+                { id: 'APT-502', name: 'Rajesh Varma', doctor: 'Dr. Priya Reddy (Orthopedics)', time: '2026-11-25 11:45 AM', status: 'Checked In' }
             ]));
         }
 
@@ -501,6 +616,31 @@
             localStorage.setItem('medicore_invoices', JSON.stringify([
                 { id: 'INV-901', name: 'Ananya Sharma', service: 'Cardiology Consultation & Labs', amount: '₹4,500', status: 'Paid' },
                 { id: 'INV-902', name: 'Rajesh Varma', service: 'Orthopedic Follow-up & X-Ray', amount: '₹6,800', status: 'Pending Balance' }
+            ]));
+        }
+
+        if (!localStorage.getItem('medicore_beds')) {
+            localStorage.setItem('medicore_beds', JSON.stringify([
+                { id: 'ICU-01', ward: 'Cardiac ICU', patient: 'Rajesh Varma', status: 'Occupied' },
+                { id: 'ICU-02', ward: 'Cardiac ICU', patient: 'Vacant', status: 'Available' },
+                { id: 'ICU-03', ward: 'Trauma ICU', patient: 'Sanitization', status: 'Cleaning' },
+                { id: 'WRD-101', ward: 'General Ward A', patient: 'Ananya Sharma', status: 'Occupied' },
+                { id: 'WRD-102', ward: 'General Ward A', patient: 'Vacant', status: 'Available' },
+                { id: 'WRD-103', ward: 'General Ward B', patient: 'Vacant', status: 'Available' }
+            ]));
+        }
+
+        if (!localStorage.getItem('medicore_rx')) {
+            localStorage.setItem('medicore_rx', JSON.stringify([
+                { id: 'RX-301', patient: 'Ananya Sharma', meds: 'Telmisartan 40mg (1-0-0)', notes: 'Low sodium diet, BP check weekly' },
+                { id: 'RX-302', patient: 'Rajesh Varma', meds: 'Calcium + Vit D3 (0-1-0)', notes: 'Physiotherapy 2x daily' }
+            ]));
+        }
+
+        if (!localStorage.getItem('medicore_labs')) {
+            localStorage.setItem('medicore_labs', JSON.stringify([
+                { id: 'LAB-701', patient: 'Ananya Sharma', test: '12-Lead ECG & Lipid Profile', finding: 'Normal Sinus Rhythm', status: 'Verified & Released' },
+                { id: 'LAB-702', patient: 'Rajesh Varma', test: 'Digital Knee X-Ray (AP/Lat)', finding: 'Alignment Stable', status: 'Pending Doctor Review' }
             ]));
         }
 
@@ -513,21 +653,24 @@
 
         const modules = {
             doctor: [
-                { id: 'patients', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
-                { id: 'billing', title: 'Billing & Prescriptions', desc: 'Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.', list: ['Digital Prescriptions', 'Billing Processing', 'Insurance Integration'] },
-                { id: 'administration', title: 'Staff & Administration', desc: 'Optimize comprehensive facility operations through strategic resource allocation and staff shift management.', list: ['Staff Shift Rosters', 'Resource Allocation', 'Patient Care Optimization'] }
+                { id: 'patients', docOnly: false, title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
+                { id: 'beds', docOnly: true, title: 'ICU & Ward Bed Occupancy', desc: 'Live critical care and inpatient ward bed tracking with one-click status updates.', list: ['Real-time ICU Availability', 'Ward Turnover Status', 'Inpatient Bed Assignment'] },
+                { id: 'prescriptions', docOnly: true, title: 'Digital E-Prescription Pad', desc: 'Author and print verified clinical prescriptions directly into patient records.', list: ['Medication & Dosage Entry', 'Clinical Follow-up Notes', 'Printable Rx Slips'] },
+                { id: 'diagnostics', docOnly: true, title: 'Lab & Diagnostic Reports', desc: 'Review pathology, ECG, and radiology findings prior to patient release.', list: ['ECG & Blood Panel Queue', 'Doctor Sign-off Verification', 'Diagnostic Findings Log'] },
+                { id: 'billing', docOnly: false, title: 'Billing & Financial Ledger', desc: 'Streamline itemized hospital billing transactions and update payment statuses.', list: ['Billing Processing', 'Payment Reconciliation', 'Itemized Invoices'] },
+                { id: 'administration', docOnly: true, title: 'Staff & Administration', desc: 'Confidential facility operations, doctor rosters, and nursing shift schedules.', list: ['Staff Shift Rosters', 'Department Duty Status', 'Resource Allocation'] }
             ],
             patient: [
-                { id: 'patients', title: 'Patient Records', desc: 'View your personal medical logs, health demographics, and clinical history safely.', list: ['My Electronic Health Records', 'Personal History Access', 'Demographic Details'] },
-                { id: 'appointments', title: 'Appointments', desc: 'Check available consultation schedules, secure booking slots, and track appointment statuses.', list: ['Consultation Scheduling', 'Doctor Availability Check', 'Real-time Status Tracking'] },
-                { id: 'billing', title: 'Billing & Prescriptions', desc: 'Review your itemized hospital bills, payment statuses, and active digital prescriptions.', list: ['Prescription Downloads', 'Invoice Payment Status', 'Itemized Statement'] }
+                { id: 'patients', docOnly: false, title: 'My Health Records', desc: 'View your personal medical logs, health demographics, and clinical history safely.', list: ['My Electronic Health Records', 'Personal History Access', 'Demographic Details'] },
+                { id: 'appointments', docOnly: false, title: 'Appointments', desc: 'Check available consultation schedules, secure booking slots, and track appointment statuses.', list: ['Consultation Scheduling', 'Doctor Availability Check', 'Real-time Status Tracking'] },
+                { id: 'billing', docOnly: false, title: 'My Bills & Invoices', desc: 'Review your itemized hospital bills and payment statuses.', list: ['Invoice Payment Status', 'Itemized Statement', 'Consultation Receipts'] }
             ]
         };
 
         const navContent = {
             discover: {
                 title: "Discover MediCore Intelligence System",
-                desc: "MediCore is an enterprise-grade clinical operations platform engineered to unify patient records, appointment scheduling, and automated billing workflows with persistent LocalStorage database support."
+                desc: "MediCore is an enterprise-grade clinical operations platform engineered to unify patient records, appointment scheduling, and automated billing workflows with strict role-based access control."
             },
             hospitals: {
                 title: "Find a MediCore Facility Near You",
@@ -614,12 +757,16 @@
             document.getElementById('role-display').innerText = role;
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
+
+            // Hide doctor-only invoice creation button when patient is logged in
+            document.getElementById('btn-add-invoice').style.display = role === 'doctor' ? 'inline-block' : 'none';
             
             modules[role].forEach(mod => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => openView(mod.id);
                 card.innerHTML = `
+                    ${mod.docOnly ? '<span class="doc-tag">Doctor Only</span>' : ''}
                     <h3>${mod.title}</h3>
                     <p>${mod.desc}</p>
                     <ul>
@@ -634,10 +781,9 @@
         }
 
         function loadTables() {
-            // Load Patients
+            // Patients
             const patients = JSON.parse(localStorage.getItem('medicore_patients'));
-            const pTbody = document.getElementById('patient-table-body');
-            pTbody.innerHTML = patients.map(p => `
+            document.getElementById('patient-table-body').innerHTML = patients.map(p => `
                 <tr>
                     <td>${p.id}</td>
                     <td>${p.name}</td>
@@ -648,10 +794,9 @@
                 </tr>
             `).join('');
 
-            // Load Appointments
+            // Appointments
             const appts = JSON.parse(localStorage.getItem('medicore_appointments'));
-            const aTbody = document.getElementById('appt-table-body');
-            aTbody.innerHTML = appts.map(a => `
+            document.getElementById('appt-table-body').innerHTML = appts.map(a => `
                 <tr>
                     <td>${a.id}</td>
                     <td>${a.name}</td>
@@ -661,26 +806,94 @@
                 </tr>
             `).join('');
 
-            // Load Invoices
+            // Invoices
             const invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
-            const bTbody = document.getElementById('billing-table-body');
-            bTbody.innerHTML = invoices.map(i => `
+            document.getElementById('billing-table-body').innerHTML = invoices.map(i => `
                 <tr>
                     <td>${i.id}</td>
                     <td>${i.name}</td>
                     <td>${i.service}</td>
                     <td>${i.amount}</td>
-                    <td><span class="status-badge ${i.status === 'Paid' ? 'status-paid' : 'status-pending'}" onclick="toggleInvoiceStatus('${i.id}')">${i.status} (Click to toggle)</span></td>
+                    <td><span class="status-badge ${i.status === 'Paid' ? 'status-paid' : 'status-pending'}" onclick="toggleInvoiceStatus('${i.id}')">${i.status}</span></td>
+                </tr>
+            `).join('');
+
+            // Doctor-Only: Bed Grid
+            const beds = JSON.parse(localStorage.getItem('medicore_beds'));
+            document.getElementById('bed-grid-container').innerHTML = beds.map(b => {
+                const cls = b.status === 'Available' ? 'bed-available' : (b.status === 'Occupied' ? 'bed-occupied' : 'bed-cleaning');
+                const badgeCls = b.status === 'Available' ? 'status-paid' : (b.status === 'Occupied' ? 'status-pending' : 'status-conf');
+                return `
+                    <div class="bed-box ${cls}" onclick="cycleBedStatus('${b.id}')">
+                        <div style="font-weight:bold; font-size:16px; margin-bottom:4px;">${b.id}</div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">${b.ward}</div>
+                        <div style="font-size:13px; margin-bottom:8px;">Patient: <strong>${b.patient}</strong></div>
+                        <span class="status-badge ${badgeCls}">${b.status}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Doctor-Only: E-Prescriptions
+            const rxList = JSON.parse(localStorage.getItem('medicore_rx'));
+            document.getElementById('rx-table-body').innerHTML = rxList.map(r => `
+                <tr>
+                    <td>${r.id}</td>
+                    <td>${r.patient}</td>
+                    <td><strong>${r.meds}</strong></td>
+                    <td>${r.notes}</td>
+                    <td><button class="action-btn" style="padding:5px 10px; font-size:12px;" onclick="window.print()">Print Rx</button></td>
+                </tr>
+            `).join('');
+
+            // Doctor-Only: Lab Reports
+            const labs = JSON.parse(localStorage.getItem('medicore_labs'));
+            document.getElementById('lab-table-body').innerHTML = labs.map(l => `
+                <tr>
+                    <td>${l.id}</td>
+                    <td>${l.patient}</td>
+                    <td>${l.test}</td>
+                    <td>${l.finding}</td>
+                    <td><span class="status-badge ${l.status.includes('Verified') ? 'status-paid' : 'status-pending'}" onclick="toggleLabStatus('${l.id}')">${l.status}</span></td>
                 </tr>
             `).join('');
         }
 
+        function cycleBedStatus(id) {
+            if (currentRole !== 'doctor') return;
+            let beds = JSON.parse(localStorage.getItem('medicore_beds'));
+            beds = beds.map(b => {
+                if (b.id === id) {
+                    if (b.status === 'Available') { b.status = 'Occupied'; b.patient = 'Admitted Patient'; }
+                    else if (b.status === 'Occupied') { b.status = 'Cleaning'; b.patient = 'Sanitization'; }
+                    else { b.status = 'Available'; b.patient = 'Vacant'; }
+                }
+                return b;
+            });
+            localStorage.setItem('medicore_beds', JSON.stringify(beds));
+            loadTables();
+        }
+
+        function toggleLabStatus(id) {
+            if (currentRole !== 'doctor') return;
+            let labs = JSON.parse(localStorage.getItem('medicore_labs'));
+            labs = labs.map(l => {
+                if (l.id === id) {
+                    l.status = l.status === 'Verified & Released' ? 'Pending Doctor Review' : 'Verified & Released';
+                }
+                return l;
+            });
+            localStorage.setItem('medicore_labs', JSON.stringify(labs));
+            loadTables();
+        }
+
         function toggleInvoiceStatus(id) {
+            if (currentRole !== 'doctor') {
+                alert('Only authorized doctors/billing staff can modify payment status.');
+                return;
+            }
             let invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
             invoices = invoices.map(i => {
-                if(i.id === id) {
-                    i.status = i.status === 'Paid' ? 'Pending Balance' : 'Paid';
-                }
+                if (i.id === id) i.status = i.status === 'Paid' ? 'Pending Balance' : 'Paid';
                 return i;
             });
             localStorage.setItem('medicore_invoices', JSON.stringify(invoices));
@@ -690,9 +903,7 @@
         function toggleApptStatus(id) {
             let appts = JSON.parse(localStorage.getItem('medicore_appointments'));
             appts = appts.map(a => {
-                if(a.id === id) {
-                    a.status = a.status === 'Confirmed' ? 'Checked In' : 'Confirmed';
-                }
+                if (a.id === id) a.status = a.status === 'Confirmed' ? 'Checked In' : 'Confirmed';
                 return a;
             });
             localStorage.setItem('medicore_appointments', JSON.stringify(appts));
@@ -700,10 +911,36 @@
         }
 
         function openAppointmentModal() { document.getElementById('modal-appointment').style.display = 'flex'; }
-        function openInvoiceModal() { document.getElementById('modal-invoice').style.display = 'flex'; }
+        function openInvoiceModal() {
+            if (currentRole !== 'doctor') return;
+            document.getElementById('modal-invoice').style.display = 'flex';
+        }
         function closeModals() {
             document.getElementById('modal-appointment').style.display = 'none';
             document.getElementById('modal-invoice').style.display = 'none';
+            document.getElementById('modal-rx').style.display = 'none';
+        }
+
+        function openRxModal() {
+            if (currentRole !== 'doctor') return;
+            document.getElementById('modal-rx').style.display = 'flex';
+        }
+
+        function saveNewPrescription() {
+            if (currentRole !== 'doctor') return;
+            const patient = document.getElementById('rx-patient').value;
+            const meds = document.getElementById('rx-meds').value;
+            const notes = document.getElementById('rx-notes').value;
+
+            if (!patient || !meds) { alert('Please enter patient name and medication.'); return; }
+
+            let rxList = JSON.parse(localStorage.getItem('medicore_rx'));
+            rxList.push({ id: 'RX-' + Math.floor(400 + Math.random() * 500), patient, meds, notes });
+            localStorage.setItem('medicore_rx', JSON.stringify(rxList));
+
+            closeModals();
+            loadTables();
+            alert('E-Prescription issued and saved!');
         }
 
         function saveNewAppointment() {
@@ -711,7 +948,7 @@
             const doctor = document.getElementById('appt-doctor').value;
             const time = document.getElementById('appt-time').value;
 
-            if(!name) { alert('Please enter patient name.'); return; }
+            if (!name) { alert('Please enter patient name.'); return; }
 
             let appts = JSON.parse(localStorage.getItem('medicore_appointments'));
             appts.push({ id: 'APT-' + Math.floor(600 + Math.random() * 300), name, doctor, time, status: 'Confirmed' });
@@ -723,11 +960,12 @@
         }
 
         function saveNewInvoice() {
+            if (currentRole !== 'doctor') return;
             const name = document.getElementById('inv-patient-name').value;
             const service = document.getElementById('inv-service').value;
             const amount = document.getElementById('inv-amount').value;
 
-            if(!name) { alert('Please enter patient name.'); return; }
+            if (!name) { alert('Please enter patient name.'); return; }
 
             let invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
             invoices.push({ id: 'INV-' + Math.floor(900 + Math.random() * 100), name, service, amount, status: 'Pending Balance' });
@@ -740,19 +978,15 @@
 
         function filterPatientTable() {
             const query = document.getElementById('patient-search').value.toLowerCase();
-            const rows = document.querySelectorAll('#patient-table-body tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
+            document.querySelectorAll('#patient-table-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
             });
         }
 
         function filterBillingTable() {
             const query = document.getElementById('billing-search').value.toLowerCase();
-            const rows = document.querySelectorAll('#billing-table-body tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
+            document.querySelectorAll('#billing-table-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
             });
         }
 
@@ -772,6 +1006,11 @@
         }
 
         function openView(viewId) {
+            // Strict RBAC guard preventing Patient role from accessing Doctor-only views
+            if (doctorOnlyViews.includes(viewId) && currentRole !== 'doctor') {
+                alert('Access Denied: This module is restricted to Doctor Portal accounts.');
+                return;
+            }
             document.getElementById('dashboard-view').style.display = 'none';
             document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
             document.getElementById('view-' + viewId).style.display = 'block';
