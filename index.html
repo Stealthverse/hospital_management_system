@@ -3,946 +3,902 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediCore Intelligence System - Enterprise HMS</title>
+    <title>MediCore Intelligence System | Smart Hospital Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-deep: #0b0f19;
-            --bg-card: #131b2e;
-            --bg-card-hover: #1a253f;
-            --border-color: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-teal: #14b8a6;
-            --accent-blue: #38bdf8;
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060a14;
+            color: #f8fafc;
+            overflow-x: hidden;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+        /* Smooth Keyframe Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
         }
-
-        @keyframes slideInToast {
-            from { transform: translateX(100%); opacity: 0; }
+        @keyframes pulseEmergency {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.65); }
+            70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        @keyframes toastSlideIn {
+            from { transform: translateX(110%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            animation: fadeIn 0.4s ease-out;
+        @keyframes ecgDraw {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
         }
 
-        /* Enterprise Sticky Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #070a12;
-            padding: 16px 40px;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+        .animate-fade-up { animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-float { animation: floatSlow 4s ease-in-out infinite; }
+        .pulse-emergency { animation: pulseEmergency 2s infinite; }
+        .toast-enter { animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .ecg-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: ecgDraw 3.5s linear infinite;
+        }
+
+        /* Glassmorphism Cards & Surfaces */
+        .glass-nav {
+            background: rgba(6, 10, 20, 0.82);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.14);
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(19, 28, 49, 0.85), rgba(11, 17, 32, 0.92));
+            border: 1px solid rgba(148, 163, 184, 0.14);
             backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .nav-left, .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-        .nav-item {
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: var(--transition-smooth);
-            background: none;
-            border: none;
-            font-family: inherit;
-            padding: 0;
-        }
-        .nav-item:hover { color: var(--accent-blue); transform: translateY(-1px); }
-        .logo {
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        .logo span { color: var(--accent-teal); }
-        .emergency-pill {
-            background: #b91c1c;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            animation: pulseGlow 2s infinite;
-            cursor: pointer;
-        }
-        .auth-badge-btn {
-            background: #1e293b;
-            border: 1px solid var(--border-color);
-            color: var(--accent-teal);
-            padding: 7px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        .auth-badge-btn:hover { background: #334155; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2); }
-
-        .wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        /* Glassmorphic Modals */
-        .modal-overlay {
-            display: flex;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(7, 10, 18, 0.88);
-            backdrop-filter: blur(8px);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            animation: fadeIn 0.2s ease-out;
-        }
-        .auth-card, .custom-modal-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 35px;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            animation: fadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .auth-card h2, .custom-modal-card h2 { color: var(--accent-blue); margin-bottom: 5px; }
-        .auth-card p, .custom-modal-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
-        
-        .tab-row {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-            transition: var(--transition-smooth);
-        }
-        .tab-btn.active { color: var(--accent-teal); border-bottom: 2px solid var(--accent-teal); }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .input-group label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; }
-        .input-field, .select-field {
-            width: 100%;
-            padding: 11px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-deep);
-            color: white;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 14px;
-            transition: var(--transition-smooth);
-        }
-        .input-field:focus, .select-field:focus { outline: none; border-color: var(--accent-teal); box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15); }
-
-        .auth-btn, .modal-submit-btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            font-weight: bold;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        .btn-doc { background: #2563eb; color: white; }
-        .btn-pat { background: #059669; color: white; }
-        .auth-btn:hover, .modal-submit-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
-        /* Toast Notifications */
-        #toast-container {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toast {
-            background: var(--bg-card);
-            border-left: 4px solid var(--accent-teal);
-            color: white;
-            padding: 14px 22px;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            font-size: 13px;
-            font-weight: 500;
-            animation: slideInToast 0.3s ease-out forwards;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Hero Section */
-        .hero-section { text-align: left; margin-bottom: 30px; }
-        .hero-badge { font-size: 12px; letter-spacing: 2px; color: var(--accent-teal); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; }
-        .hero-section h1 { font-size: 40px; margin: 0 0 15px 0; color: #ffffff; font-weight: 700; letter-spacing: -0.5px; }
-        .hero-section p { color: var(--text-muted); font-size: 15px; line-height: 1.6; max-width: 900px; margin-bottom: 10px; }
-
-        .pulse-line {
-            height: 35px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 50' preserveAspectRatio='none'%3E%3Cpath d='M0,25 L200,25 L220,10 L240,40 L260,20 L280,30 L300,25 L600,25 L620,5 L640,45 L660,25 L1000,25' fill='none' stroke='%2314b8a6' stroke-width='2.5'/%3E%3C/svg%3E") left no-repeat;
-            background-size: 100% 100%;
-            margin: 25px 0 35px 0;
-            opacity: 0.8;
-        }
-
-        /* Animated Interactive Module Cards */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: linear-gradient(90deg, var(--accent-teal), var(--accent-blue));
-            opacity: 0;
-            transition: var(--transition-smooth);
-        }
-        .card:hover {
-            background: var(--bg-card-hover);
-            border-color: rgba(20, 184, 166, 0.4);
+        .glass-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px -10px rgba(20, 184, 166, 0.15);
+            border-color: rgba(20, 184, 166, 0.55);
+            box-shadow: 0 18px 36px -12px rgba(20, 184, 166, 0.22);
         }
-        .card:hover::before { opacity: 1; }
-        
-        .doc-tag {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--accent-blue);
-            font-weight: bold;
-            border: 1px solid rgba(56, 189, 248, 0.2);
+        .hero-glow {
+            background: radial-gradient(circle at 75% 25%, rgba(20, 184, 166, 0.16), transparent 50%),
+                        radial-gradient(circle at 20% 75%, rgba(56, 189, 248, 0.14), transparent 50%);
         }
-        .card h3 { margin: 0 0 10px 0; color: white; font-size: 20px; }
-        .card p { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 0; }
-        .card ul { padding-left: 16px; color: var(--text-muted); font-size: 13px; margin: 15px 0 0 0; }
-        .card li { margin-bottom: 6px; }
-
-        /* Detail Views & Tables */
-        .detail-view {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 35px;
-            border-radius: 16px;
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
-        .header-action-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .search-bar {
-            padding: 9px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-deep);
-            color: white;
-            font-size: 13px;
-            width: 260px;
-            transition: var(--transition-smooth);
-        }
-        .search-bar:focus { outline: none; border-color: var(--accent-teal); box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15); }
-
-        .action-btn {
-            background: var(--accent-teal);
-            color: #0b0f19;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-            transition: var(--transition-smooth);
-        }
-        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(20, 184, 166, 0.3); }
-
-        .back-btn {
-            background: #1e293b;
-            color: white;
-            border: 1px solid var(--border-color);
-            padding: 9px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: var(--transition-smooth);
-        }
-        .back-btn:hover { background: #334155; transform: translateY(-1px); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 14px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-        th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; }
-        tr { transition: background-color 0.2s; }
-        tr:hover { background-color: rgba(255, 255, 255, 0.02); }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-block;
-            transition: var(--transition-smooth);
-        }
-        .status-badge:hover { transform: scale(1.05); filter: brightness(1.2); }
-        .status-stable { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
-        .status-conf { background: rgba(56, 189, 248, 0.15); color: #60a5fa; }
-        .status-paid { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-        .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-
-        /* Bed Occupancy Grid */
-        .bed-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
-        }
-        .bed-box {
-            background: var(--bg-deep);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 18px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        .bed-box:hover { transform: translateY(-4px); border-color: var(--accent-teal); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        .bed-available { border-left: 4px solid #10b981; }
-        .bed-occupied { border-left: 4px solid #ef4444; }
-        .bed-cleaning { border-left: 4px solid #f59e0b; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-    <!-- TOAST NOTIFICATIONS -->
-    <div id="toast-container"></div>
+    <!-- Floating Toast Notification Stack -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- STICKY ENTERPRISE NAVBAR -->
-    <div class="navbar">
-        <div class="nav-left">
-            <div class="logo" onclick="openNavInfo('discover')">Medi<span>Core</span></div>
-            <button class="nav-item" onclick="openNavInfo('discover')">DISCOVER MEDICORE</button>
-            <button class="nav-item" onclick="openNavInfo('hospitals')">FIND HOSPITAL</button>
-            <button class="nav-item" onclick="openNavInfo('services')">MEDICAL SERVICES</button>
+    <!-- Sticky Translucent Enterprise Navbar -->
+    <header class="glass-nav sticky top-0 z-40 px-4 sm:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-8">
+                <button onclick="showLanding()" class="flex items-center gap-2.5 text-left group">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-sky-400 flex items-center justify-center text-slate-950 font-extrabold text-lg shadow-lg shadow-teal-500/20 group-hover:scale-105 transition">
+                        M+
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight text-white">Medi<span class="text-teal-400">Core</span></span>
+                        <span class="block text-[10px] uppercase tracking-widest text-slate-400 -mt-1">SmartHMIS Suite</span>
+                    </div>
+                </button>
+                <nav class="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wider text-slate-300 uppercase">
+                    <button onclick="showLanding()" class="hover:text-teal-400 transition">Platform Overview</button>
+                    <a href="#modules-showcase" onclick="showLanding()" class="hover:text-teal-400 transition">Clinical Modules</a>
+                    <a href="#hospital-network" onclick="showLanding()" class="hover:text-teal-400 transition">Hospital Network</a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="triggerEmergencyDispatch()" class="pulse-emergency bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3.5 py-2 rounded-full flex items-center gap-1.5 transition">
+                    <span>🚨</span> EMERGENCY 1066
+                </button>
+                <button id="nav-doc-btn" onclick="openAuthModal('doctor')" class="bg-slate-800/90 hover:bg-slate-700 border border-sky-500/30 text-sky-300 text-xs font-bold px-4 py-2 rounded-xl transition">
+                    Doctor Login
+                </button>
+                <button id="nav-pat-btn" onclick="openAuthModal('patient')" class="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-teal-500/20 transition">
+                    Patient Portal
+                </button>
+                <button id="nav-dash-btn" onclick="returnToDashboard()" class="hidden bg-teal-500/20 border border-teal-400/40 text-teal-300 text-xs font-bold px-4 py-2 rounded-xl hover:bg-teal-500/30 transition">
+                    Active Workspace →
+                </button>
+            </div>
         </div>
-        <div class="nav-right">
-            <div class="emergency-pill" onclick="showToast('🚨 Emergency 1066 Dispatch Alert Triggered!', 'error')">📞 EMERGENCY 1066</div>
-            <button class="auth-badge-btn" onclick="openAuthModal('doctor')">Doctor Portal</button>
-            <button class="auth-badge-btn" onclick="openAuthModal('patient')" style="background: #059669; color: white; border: none;">Patient Portal</button>
-        </div>
-    </div>
+    </header>
 
-    <!-- AUTHENTICATION MODAL -->
-    <div id="auth-modal" class="modal-overlay">
-        <div class="auth-card">
-            <h2 id="auth-modal-title">Doctor Portal</h2>
-            <p>Secure enterprise authentication with LocalStorage persistence.</p>
-            
-            <div class="tab-row">
-                <button class="tab-btn active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
-                <button class="tab-btn" id="tab-signup" onclick="switchAuthTab('signup')">Register Account</button>
-            </div>
-
-            <div class="input-group" id="group-name" style="display: none;">
-                <label>Full Name</label>
-                <input type="text" id="auth-name" class="input-field" placeholder="Dr. Name / Patient Name">
-            </div>
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="auth-email" class="input-field" placeholder="name@medicore.in">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="auth-pass" class="input-field" placeholder="••••••••">
-            </div>
-
-            <button class="auth-btn btn-doc" id="auth-submit-btn" onclick="handleAuthSubmit()">Sign In to Dashboard</button>
-        </div>
-    </div>
-
-    <!-- APPOINTMENT MODAL -->
-    <div id="modal-appointment" class="modal-overlay" style="display: none;">
-        <div class="custom-modal-card">
-            <h2>New Appointment</h2>
-            <p>Schedule a real-time consultation slot.</p>
-            <div class="input-group">
-                <label>Patient Name</label>
-                <input type="text" id="appt-patient-name" class="input-field" placeholder="e.g. Priya Sharma">
-            </div>
-            <div class="input-group">
-                <label>Assigned Doctor / Department</label>
-                <select id="appt-doctor" class="select-field">
-                    <option>Dr. Ramesh Kumar (Cardiology)</option>
-                    <option>Dr. Priya Reddy (Orthopedics)</option>
-                    <option>Dr. Suresh Varma (Neurology)</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Appointment Timestamp</label>
-                <input type="text" id="appt-time" class="input-field" value="2026-11-26 10:00 AM">
-            </div>
-            <button class="modal-submit-btn btn-doc" onclick="saveNewAppointment()">Confirm & Schedule</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
-
-    <!-- INVOICE MODAL -->
-    <div id="modal-invoice" class="modal-overlay" style="display: none;">
-        <div class="custom-modal-card">
-            <h2>Generate New Invoice</h2>
-            <p>Create itemized hospital billing entries.</p>
-            <div class="input-group">
-                <label>Patient Name</label>
-                <input type="text" id="inv-patient-name" class="input-field" placeholder="e.g. Priya Sharma">
-            </div>
-            <div class="input-group">
-                <label>Service Details</label>
-                <input type="text" id="inv-service" class="input-field" value="General Consultation & Diagnostics">
-            </div>
-            <div class="input-group">
-                <label>Amount (₹)</label>
-                <input type="text" id="inv-amount" class="input-field" value="₹3,500">
-            </div>
-            <button class="modal-submit-btn btn-pat" onclick="saveNewInvoice()">Generate Invoice</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
-
-    <!-- DIGITAL PRESCRIPTION MODAL -->
-    <div id="modal-rx" class="modal-overlay" style="display: none;">
-        <div class="custom-modal-card">
-            <h2>Issue Digital E-Prescription</h2>
-            <p>Doctor-authorized clinical medication order.</p>
-            <div class="input-group">
-                <label>Patient Name</label>
-                <input type="text" id="rx-patient" class="input-field" placeholder="e.g. Ananya Sharma">
-            </div>
-            <div class="input-group">
-                <label>Medication & Dosage</label>
-                <input type="text" id="rx-meds" class="input-field" placeholder="e.g. Amlodipine 5mg (1-0-0 after food)">
-            </div>
-            <div class="input-group">
-                <label>Clinical Notes / Follow-up</label>
-                <input type="text" id="rx-notes" class="input-field" value="Monitor BP daily; review in 14 days">
-            </div>
-            <button class="modal-submit-btn btn-doc" onclick="saveNewPrescription()">Save & Issue Rx</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
-
-    <div class="wrapper">
-        <!-- MAIN APP SCREEN -->
-        <div id="app-screen" style="display: none;">
-            
-            <div class="hero-section">
-                <div class="hero-badge">CLINICAL OPERATIONS PLATFORM</div>
-                <h1>MediCore Intelligence System</h1>
-                <p>Enterprise-grade healthcare management delivering seamless coordination across clinical records, bed occupancy, and financial operations.</p>
-                <div class="pulse-line"></div>
-            </div>
-
-            <!-- ACTIVE ROLE BANNER -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 16px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-                <div>Active View Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);"></strong> (Secured Session)</div>
-                <button onclick="logout()" style="background: #dc2626; color: white; border: none; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: var(--transition-smooth);">Logout</button>
-            </div>
-
-            <!-- DASHBOARD CARDS VIEW -->
-            <div id="dashboard-view">
-                <div style="font-size: 13px; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase;">Dashboard / Authorized Modules</div>
-                <div class="grid" id="module-grid"></div>
-            </div>
-
-            <!-- NAVBAR INFO VIEW -->
-            <div id="view-nav-info" class="detail-view">
-                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                <h2 id="nav-info-title" style="margin-top: 20px;">Information Portal</h2>
-                <p id="nav-info-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-top: 10px;"></p>
-            </div>
-
-            <!-- PATIENT RECORDS -->
-            <div id="view-patients" class="detail-view">
-                <div class="header-action-row">
-                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <input type="text" id="patient-search" class="search-bar" placeholder="Search patients by name or ID..." onkeyup="filterPatientTable()">
+    <!-- PRE-LOGIN ENTERPRISE LANDING PAGE (SHM SOLUTIONS STYLE) -->
+    <main id="landing-view" class="hero-glow flex-grow">
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-8 pt-14 pb-16 grid lg:grid-cols-12 gap-10 items-center">
+            <div class="lg:col-span-7 animate-fade-up">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs font-semibold mb-6">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
+                    ABDM Ready • Cloud-Native Hospital ERP
                 </div>
-                <h2>Patient Records Management</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Active registry tracking authenticated patients, vitals, and EHR files.</p>
-                <table>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                    Next-Gen <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-400">Paperless Hospital</span> Management System
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg mt-5 leading-relaxed max-w-2xl">
+                    Unify outpatient queues, ICU bed occupancy, digital E-prescriptions, diagnostic labs, and automated Rupee (₹) billing into one intelligent, zero-downtime clinical workspace.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-4 mt-8">
+                    <button onclick="openAuthModal('doctor')" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold px-6 py-3.5 rounded-xl shadow-xl shadow-blue-600/25 transition transform hover:-translate-y-0.5">
+                        Launch Doctor Command Center →
+                    </button>
+                    <button onclick="openAuthModal('patient')" class="bg-slate-800/80 hover:bg-slate-700 border border-slate-600 text-white font-semibold px-6 py-3.5 rounded-xl transition transform hover:-translate-y-0.5">
+                        Patient Self-Service Demo
+                    </button>
+                </div>
+
+                <!-- Trust & ROI Metric Strip -->
+                <div class="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-slate-800/80">
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-teal-400">100%</div>
+                        <div class="text-xs text-slate-400 mt-1">Paperless EHR & Rx</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-sky-400">42%</div>
+                        <div class="text-xs text-slate-400 mt-1">Faster OPD Turnaround</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400">Zero</div>
+                        <div class="text-xs text-slate-400 mt-1">Billing Leakage</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Animated Hospital Telemetry Preview Card -->
+            <div class="lg:col-span-5 animate-float">
+                <div class="glass-card rounded-2xl p-6 shadow-2xl border border-teal-500/25">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-400">Live Hospital Telemetry</span>
+                            <h3 class="text-lg font-bold text-white">MediCore Central Hub • AP</h3>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                            ● Systems Online
+                        </span>
+                    </div>
+
+                    <!-- Animated ECG Pulse SVG -->
+                    <div class="bg-slate-950/80 rounded-xl p-3 mb-5 border border-slate-800">
+                        <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                            <span>ICU Critical Care Monitor</span>
+                            <span class="text-teal-400 font-mono">74 BPM • SpO2 99%</span>
+                        </div>
+                        <svg viewBox="0 0 500 60" class="w-full h-12">
+                            <path class="ecg-path" d="M0,30 L110,30 L125,10 L140,50 L155,15 L170,40 L185,30 L310,30 L325,8 L340,52 L355,22 L370,30 L500,30" fill="none" stroke="#14b8a6" stroke-width="2.5"/>
+                        </svg>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-left">
+                        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+                            <div class="text-xs text-slate-400">ICU & Ward Occupancy</div>
+                            <div class="text-xl font-bold text-white mt-1" id="hero-bed-stat">33% Occupied</div>
+                            <div class="text-[11px] text-emerald-400 mt-0.5">Live bed sync active</div>
+                        </div>
+                        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+                            <div class="text-xs text-slate-400">Today's OPD Queue</div>
+                            <div class="text-xl font-bold text-sky-400 mt-1" id="hero-appt-stat">2 Scheduled</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">Avg wait: 8 mins</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enterprise Modules Showcase -->
+        <section id="modules-showcase" class="max-w-7xl mx-auto px-4 sm:px-8 py-12">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-teal-400">End-to-End Clinical Architecture</span>
+                <h2 class="text-3xl font-extrabold text-white mt-2">Built for Multi-Specialty Hospitals</h2>
+                <p class="text-slate-400 text-sm mt-2">Strict Role-Based Access Control (RBAC) separates clinical command modules from patient self-service portals.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="w-11 h-11 rounded-xl bg-teal-500/15 text-teal-400 flex items-center justify-center text-xl mb-4">🏥</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Smart ICU & Ward Bed Grid</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Real-time color-coded bed availability tracker allowing doctors and nursing staff to toggle Available, Occupied, and Sanitization states instantly.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="w-11 h-11 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center text-xl mb-4">💊</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Digital E-Prescription & Labs</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Author structured medication dosages, verify ECG/radiology reports, and generate printable clinical Rx slips with zero handwriting errors.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xl mb-4">💳</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Automated Rupee (₹) Ledger</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Transparent itemized invoicing with live payment reconciliation and instant patient portal receipt access.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hospital Network Banner -->
+        <section id="hospital-network" class="max-w-7xl mx-auto px-4 sm:px-8 pb-16">
+            <div class="glass-card rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-sky-500/20">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Regional Clinical Network</span>
+                    <h3 class="text-2xl font-bold text-white mt-1">Vijayawada • Hyderabad • Visakhapatnam</h3>
+                    <p class="text-slate-400 text-sm mt-1">24/7 Level-1 Trauma Care, Cardiology, Orthopedics & Critical Care ICU.</p>
+                </div>
+                <button onclick="openAuthModal('doctor')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition whitespace-nowrap">
+                    Explore Live System Demo
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- AUTHENTICATED ROLE-BASED WORKSPACE -->
+    <section id="workspace-view" class="hidden flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 animate-fade-up">
+        <!-- Session Status Bar -->
+        <div class="glass-card rounded-2xl p-4 sm:px-6 mb-8 flex flex-wrap items-center justify-between gap-4 border border-teal-500/25">
+            <div class="flex items-center gap-3">
+                <div id="role-avatar" class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center font-bold text-lg">🩺</div>
+                <div>
+                    <div class="text-xs text-slate-400">Authenticated Session • LocalStorage Synced</div>
+                    <div class="text-sm font-bold text-white">
+                        Welcome, <span id="active-user-name" class="text-teal-400">Dr. Ramesh Kumar</span>
+                        <span id="role-pill" class="ml-2 px-2.5 py-0.5 rounded-full text-[11px] uppercase tracking-wider bg-sky-500/20 text-sky-300">DOCTOR PORTAL</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="switchRoleQuick()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-700 transition">
+                    Switch Role Demo
+                </button>
+                <button onclick="logout()" class="bg-red-600/90 hover:bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Module Cards Dashboard -->
+        <div id="dashboard-grid-section">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-lg font-bold text-white uppercase tracking-wider">Authorized Clinical Modules</h2>
+                <span class="text-xs text-slate-400" id="rbac-hint">Showing Doctor Command Suite</span>
+            </div>
+            <div id="module-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- DETAIL SUB-VIEWS -->
+        <!-- 1. Patient Records -->
+        <div id="view-patients" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+                <input type="text" id="patient-search" onkeyup="filterTable('patient-table-body', this.value)" placeholder="Search patient name, ID, or condition..." class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white w-full sm:w-72 focus:outline-none focus:border-teal-400">
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">Electronic Health Records (EHR)</h2>
+            <p class="text-slate-400 text-xs mb-6">Verified patient registry, clinical vitals, and primary diagnoses.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th>Patient ID</th>
-                            <th>Name</th>
-                            <th>Age / Gender</th>
-                            <th>Contact</th>
-                            <th>Primary Condition</th>
-                            <th>Action Status</th>
+                        <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                            <th class="py-3 px-4">Patient ID</th>
+                            <th class="py-3 px-4">Full Name</th>
+                            <th class="py-3 px-4">Age / Sex</th>
+                            <th class="py-3 px-4">Contact</th>
+                            <th class="py-3 px-4">Primary Condition</th>
+                            <th class="py-3 px-4">Clinical Status</th>
                         </tr>
                     </thead>
-                    <tbody id="patient-table-body"></tbody>
+                    <tbody id="patient-table-body" class="divide-y divide-slate-800/70 text-sm"></tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- APPOINTMENTS -->
-            <div id="view-appointments" class="detail-view">
-                <div class="header-action-row">
-                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <button class="action-btn" onclick="openAppointmentModal()">+ Add New Appointment</button>
-                </div>
-                <h2>Consultation & Appointment Schedule</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Real-time doctor appointment calendar and queue management metrics.</p>
-                <table>
+        <!-- 2. Appointments -->
+        <div id="view-appointments" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+                <button onclick="openModal('modal-appointment')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl transition">+ Book New Consultation</button>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">OPD Consultation Schedule</h2>
+            <p class="text-slate-400 text-xs mb-6">Click status badges to cycle appointment progress (Confirmed → Checked In → Completed).</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th>Appt ID</th>
-                            <th>Patient Name</th>
-                            <th>Assigned Doctor</th>
-                            <th>Timestamp</th>
-                            <th>Status Verification</th>
+                        <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                            <th class="py-3 px-4">Appt ID</th>
+                            <th class="py-3 px-4">Patient Name</th>
+                            <th class="py-3 px-4">Specialist & Dept</th>
+                            <th class="py-3 px-4">Date & Slot</th>
+                            <th class="py-3 px-4">Queue Status</th>
                         </tr>
                     </thead>
-                    <tbody id="appt-table-body"></tbody>
+                    <tbody id="appt-table-body" class="divide-y divide-slate-800/70 text-sm"></tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- BILLING -->
-            <div id="view-billing" class="detail-view">
-                <div class="header-action-row">
-                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <input type="text" id="billing-search" class="search-bar" placeholder="Search invoices..." onkeyup="filterBillingTable()">
-                    <button class="action-btn" id="btn-add-invoice" onclick="openInvoiceModal()">+ Add New Invoice</button>
+        <!-- 3. Billing -->
+        <div id="view-billing" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+                <div class="flex flex-wrap items-center gap-3">
+                    <input type="text" id="billing-search" onkeyup="filterTable('billing-table-body', this.value)" placeholder="Filter invoices..." class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white w-56 focus:outline-none focus:border-teal-400">
+                    <button id="btn-add-invoice" onclick="openModal('modal-invoice')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl transition">+ Generate Invoice</button>
                 </div>
-                <h2>Billing & Financial Ledger</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions.</p>
-                <table>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">Billing & Financial Ledger (₹)</h2>
+            <p class="text-slate-400 text-xs mb-6">Doctors/Billing admins can click payment status badges to reconcile open balances.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th>Invoice ID</th>
-                            <th>Patient Name</th>
-                            <th>Service Details</th>
-                            <th>Amount</th>
-                            <th>Payment Status</th>
+                        <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                            <th class="py-3 px-4">Invoice ID</th>
+                            <th class="py-3 px-4">Patient Name</th>
+                            <th class="py-3 px-4">Clinical Service</th>
+                            <th class="py-3 px-4">Amount</th>
+                            <th class="py-3 px-4">Payment Status</th>
                         </tr>
                     </thead>
-                    <tbody id="billing-table-body"></tbody>
+                    <tbody id="billing-table-body" class="divide-y divide-slate-800/70 text-sm"></tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- DOCTOR-ONLY: ADMINISTRATION -->
-            <div id="view-administration" class="detail-view">
-                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                <h2 style="margin-top: 20px;">Staff & Administration Roster (Doctor / Admin Only)</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Confidential clinical roster and duty shift allocations.</p>
-                <table>
+        <!-- 4. Doctor-Only: ICU & Ward Bed Grid -->
+        <div id="view-beds" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+                <span class="text-xs text-teal-400 font-medium">Click any bed card to cycle state (Available → Occupied → Cleaning)</span>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">Live ICU & Ward Bed Occupancy Grid</h2>
+            <p class="text-slate-400 text-xs mb-6">Restricted clinical command view for inpatient ward capacity.</p>
+            <div id="bed-grid-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- 5. Doctor-Only: Digital E-Prescription Pad -->
+        <div id="view-prescriptions" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+                <button onclick="openModal('modal-rx')" class="bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-xl transition">+ Issue New E-Prescription</button>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">Digital E-Prescription Console</h2>
+            <p class="text-slate-400 text-xs mb-6">Verified medication orders synced directly to pharmacy & patient records.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th>Staff ID</th>
-                            <th>Name</th>
-                            <th>Department</th>
-                            <th>Shift Timing</th>
-                            <th>Duty Status</th>
+                        <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                            <th class="py-3 px-4">Rx ID</th>
+                            <th class="py-3 px-4">Patient</th>
+                            <th class="py-3 px-4">Medication & Dosage</th>
+                            <th class="py-3 px-4">Clinical Instructions</th>
+                            <th class="py-3 px-4">Slip</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr><td>DOC-201</td><td>Dr. Ramesh Kumar</td><td>Cardiology</td><td>08:00 AM - 04:00 PM</td><td><span class="status-badge status-stable">On Duty</span></td></tr>
-                        <tr><td>DOC-204</td><td>Dr. Priya Reddy</td><td>Orthopedics</td><td>10:00 AM - 06:00 PM</td><td><span class="status-badge status-stable">On Duty</span></td></tr>
-                        <tr><td>NUR-405</td><td>Nurse Swathi Rao</td><td>Emergency / ICU</td><td>02:00 PM - 10:00 PM</td><td><span class="status-badge status-conf">Active</span></td></tr>
+                    <tbody id="rx-table-body" class="divide-y divide-slate-800/70 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 6. Doctor-Only: Diagnostics Queue -->
+        <div id="view-diagnostics" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex items-center justify-between mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">Lab & Diagnostic Reports Queue</h2>
+            <p class="text-slate-400 text-xs mb-6">Click status badges to sign off and release lab findings to patient portals.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                            <th class="py-3 px-4">Lab ID</th>
+                            <th class="py-3 px-4">Patient</th>
+                            <th class="py-3 px-4">Diagnostic Panel</th>
+                            <th class="py-3 px-4">Clinical Finding</th>
+                            <th class="py-3 px-4">Sign-Off Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lab-table-body" class="divide-y divide-slate-800/70 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 7. Doctor-Only: Staff & Administration -->
+        <div id="view-administration" class="detail-view hidden glass-card rounded-2xl p-6 sm:p-8 animate-fade-up">
+            <div class="flex items-center justify-between mb-6">
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">← Back to Modules</button>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">Staff & Clinical Shift Roster</h2>
+            <p class="text-slate-400 text-xs mb-6">Confidential duty roster across Cardiology, Orthopedics, and Emergency ICU.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                            <th class="py-3 px-4">Staff ID</th>
+                            <th class="py-3 px-4">Specialist Name</th>
+                            <th class="py-3 px-4">Department</th>
+                            <th class="py-3 px-4">Shift Hours</th>
+                            <th class="py-3 px-4">Duty Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/70 text-sm">
+                        <tr><td class="py-3.5 px-4 font-mono text-sky-400">DOC-201</td><td class="py-3.5 px-4 font-semibold">Dr. Ramesh Kumar</td><td class="py-3.5 px-4">Cardiology</td><td class="py-3.5 px-4">08:00 AM - 04:00 PM</td><td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-300">On Duty</span></td></tr>
+                        <tr><td class="py-3.5 px-4 font-mono text-sky-400">DOC-204</td><td class="py-3.5 px-4 font-semibold">Dr. Priya Reddy</td><td class="py-3.5 px-4">Orthopedics</td><td class="py-3.5 px-4">10:00 AM - 06:00 PM</td><td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-300">On Duty</span></td></tr>
+                        <tr><td class="py-3.5 px-4 font-mono text-sky-400">NUR-405</td><td class="py-3.5 px-4 font-semibold">Nurse Swathi Rao</td><td class="py-3.5 px-4">Emergency / ICU</td><td class="py-3.5 px-4">02:00 PM - 10:00 PM</td><td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-sky-500/15 text-sky-300">Active Shift</span></td></tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+    </section>
 
-            <!-- DOCTOR-ONLY: BEDS -->
-            <div id="view-beds" class="detail-view">
-                <div class="header-action-row">
-                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <span style="font-size: 12px; color: var(--text-muted);">Click any bed card to cycle status</span>
+    <!-- GLASSMORPHIC AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl max-w-md w-full p-7 border border-teal-500/30 shadow-2xl animate-fade-up relative">
+            <button onclick="closeModal('auth-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg">✕</button>
+            <h2 id="auth-modal-title" class="text-2xl font-bold text-white">Doctor Portal Login</h2>
+            <p class="text-xs text-slate-400 mt-1 mb-5">Persistent Role-Based Authentication via LocalStorage</p>
+
+            <div class="flex border-b border-slate-800 mb-5">
+                <button id="tab-signin" onclick="switchAuthTab('signin')" class="flex-1 pb-2.5 text-xs font-bold uppercase tracking-wider text-teal-400 border-b-2 border-teal-400">Sign In</button>
+                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white">Register Account</button>
+            </div>
+
+            <div id="group-name" class="hidden mb-4">
+                <label class="block text-xs text-slate-400 mb-1.5">Full Name</label>
+                <input type="text" id="auth-name" placeholder="Dr. / Patient Full Name" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-400">
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs text-slate-400 mb-1.5">Email Address</label>
+                <input type="email" id="auth-email" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-400">
+            </div>
+            <div class="mb-6">
+                <label class="block text-xs text-slate-400 mb-1.5">Password</label>
+                <input type="password" id="auth-pass" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-400">
+            </div>
+
+            <button id="auth-submit-btn" onclick="handleAuthSubmit()" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl transition">
+                Sign In to Workspace
+            </button>
+        </div>
+    </div>
+
+    <!-- CUSTOM MODAL: NEW APPOINTMENT -->
+    <div id="modal-appointment" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl max-w-md w-full p-7 border border-teal-500/30 animate-fade-up">
+            <h2 class="text-xl font-bold text-white mb-1">Book Consultation Slot</h2>
+            <p class="text-xs text-slate-400 mb-5">Schedule an OPD appointment directly into the queue.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Patient Full Name</label>
+                    <input type="text" id="appt-patient-name" placeholder="e.g. Kavya Nair" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
                 </div>
-                <h2>Live ICU & Ward Bed Occupancy Monitor</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Restricted clinical command view for real-time inpatient ward and critical care bed allocation.</p>
-                <div class="bed-grid" id="bed-grid-container"></div>
-            </div>
-
-            <!-- DOCTOR-ONLY: PRESCRIPTIONS -->
-            <div id="view-prescriptions" class="detail-view">
-                <div class="header-action-row">
-                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <button class="action-btn" onclick="openRxModal()">+ Write New E-Prescription</button>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Specialist & Department</label>
+                    <select id="appt-doctor" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                        <option>Dr. Ramesh Kumar (Cardiology)</option>
+                        <option>Dr. Priya Reddy (Orthopedics)</option>
+                        <option>Dr. Suresh Varma (Neurology)</option>
+                    </select>
                 </div>
-                <h2>Digital Prescription & E-Rx Console</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Issue verified clinical prescriptions directly to pharmacy & patient records.</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Rx ID</th>
-                            <th>Patient Name</th>
-                            <th>Prescribed Medication & Dosage</th>
-                            <th>Doctor Notes</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rx-table-body"></tbody>
-                </table>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Preferred Slot</label>
+                    <input type="text" id="appt-time" value="2026-11-26 10:30 AM" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="saveNewAppointment()" class="flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl transition">Confirm Booking</button>
+                    <button onclick="closeModal('modal-appointment')" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm">Cancel</button>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <!-- DOCTOR-ONLY: DIAGNOSTICS -->
-            <div id="view-diagnostics" class="detail-view">
-                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                <h2 style="margin-top: 20px;">Lab & Diagnostic Reports Queue</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Review and verify pathology, ECG, and radiology results before releasing to patient portals.</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Lab ID</th>
-                            <th>Patient</th>
-                            <th>Diagnostic Test</th>
-                            <th>Key Finding</th>
-                            <th>Verification Status (Click to Approve)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lab-table-body"></tbody>
-                </table>
+    <!-- CUSTOM MODAL: NEW INVOICE -->
+    <div id="modal-invoice" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl max-w-md w-full p-7 border border-teal-500/30 animate-fade-up">
+            <h2 class="text-xl font-bold text-white mb-1">Generate Rupee (₹) Invoice</h2>
+            <p class="text-xs text-slate-400 mb-5">Add an itemized bill to the hospital financial ledger.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Patient Name</label>
+                    <input type="text" id="inv-patient-name" placeholder="e.g. Ananya Sharma" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Clinical Service</label>
+                    <input type="text" id="inv-service" value="Specialist Consultation & Diagnostics" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Amount (₹)</label>
+                    <input type="text" id="inv-amount" value="₹3,200" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="saveNewInvoice()" class="flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl transition">Create Invoice</button>
+                    <button onclick="closeModal('modal-invoice')" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm">Cancel</button>
+                </div>
             </div>
+        </div>
+    </div>
 
+    <!-- CUSTOM MODAL: NEW E-PRESCRIPTION -->
+    <div id="modal-rx" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl max-w-md w-full p-7 border border-sky-500/30 animate-fade-up">
+            <h2 class="text-xl font-bold text-white mb-1">Issue Digital E-Prescription</h2>
+            <p class="text-xs text-slate-400 mb-5">Doctor-verified medication order.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Patient Name</label>
+                    <input type="text" id="rx-patient" placeholder="e.g. Ananya Sharma" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Medication & Dosage</label>
+                    <input type="text" id="rx-meds" placeholder="e.g. Amlodipine 5mg (1-0-0 after breakfast)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Clinical Notes</label>
+                    <input type="text" id="rx-notes" value="Monitor BP daily; review in 2 weeks" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="saveNewPrescription()" class="flex-1 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 rounded-xl transition">Issue Rx</button>
+                    <button onclick="closeModal('modal-rx')" class="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         let currentRole = 'doctor';
         let authMode = 'signin';
+        let isAuthenticated = false;
         const doctorOnlyViews = ['administration', 'beds', 'prescriptions', 'diagnostics'];
 
-        function showToast(message, type = 'success') {
+        // Floating Toast Notification Helper
+        function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.style.borderColor = type === 'error' ? '#ef4444' : '#14b8a6';
-            toast.innerHTML = `<span>${type === 'error' ? '⚠️' : '✅'}</span> ${message}`;
+            const borderCls = type === 'error' ? 'border-red-500' : 'border-teal-400';
+            const icon = type === 'error' ? '⚠️' : '✅';
+            toast.className = `toast-enter pointer-events-auto bg-slate-900/95 border-l-4 ${borderCls} border border-slate-700/80 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2.5 backdrop-blur-md`;
+            toast.innerHTML = `<span class="text-base">${icon}</span><span>${msg}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                toast.style.transition = 'all 0.3s ease';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // Initialize LocalStorage Data
-        if (!localStorage.getItem('medicore_patients')) {
-            localStorage.setItem('medicore_patients', JSON.stringify([
-                { id: 'P-1001', name: 'Ananya Sharma', ageGender: '28 / F', contact: '+91 98480 22331', condition: 'Hypertension Monitoring', status: 'Stable' },
-                { id: 'P-1002', name: 'Rajesh Varma', ageGender: '42 / M', contact: '+91 97011 44556', condition: 'Post-Operative Orthopedic', status: 'Recovering' }
-            ]));
+        function triggerEmergencyDispatch() {
+            showToast('🚨 Emergency 1066 Ambulance & Trauma Bay Alert Activated!', 'error');
         }
 
-        if (!localStorage.getItem('medicore_appointments')) {
-            localStorage.setItem('medicore_appointments', JSON.stringify([
-                { id: 'APT-501', name: 'Ananya Sharma', doctor: 'Dr. Ramesh Kumar (Cardiology)', time: '2026-11-25 10:30 AM', status: 'Confirmed' },
-                { id: 'APT-502', name: 'Rajesh Varma', doctor: 'Dr. Priya Reddy (Orthopedics)', time: '2026-11-25 11:45 AM', status: 'Checked In' }
-            ]));
-        }
-
-        if (!localStorage.getItem('medicore_invoices')) {
-            localStorage.setItem('medicore_invoices', JSON.stringify([
-                { id: 'INV-901', name: 'Ananya Sharma', service: 'Cardiology Consultation & Labs', amount: '₹4,500', status: 'Paid' },
-                { id: 'INV-902', name: 'Rajesh Varma', service: 'Orthopedic Follow-up & X-Ray', amount: '₹6,800', status: 'Pending Balance' }
-            ]));
-        }
-
-        if (!localStorage.getItem('medicore_beds')) {
-            localStorage.setItem('medicore_beds', JSON.stringify([
-                { id: 'ICU-01', ward: 'Cardiac ICU', patient: 'Rajesh Varma', status: 'Occupied' },
-                { id: 'ICU-02', ward: 'Cardiac ICU', patient: 'Vacant', status: 'Available' },
-                { id: 'ICU-03', ward: 'Trauma ICU', patient: 'Sanitization', status: 'Cleaning' },
-                { id: 'WRD-101', ward: 'General Ward A', patient: 'Ananya Sharma', status: 'Occupied' },
-                { id: 'WRD-102', ward: 'General Ward A', patient: 'Vacant', status: 'Available' },
-                { id: 'WRD-103', ward: 'General Ward B', patient: 'Vacant', status: 'Available' }
-            ]));
-        }
-
-        if (!localStorage.getItem('medicore_rx')) {
-            localStorage.setItem('medicore_rx', JSON.stringify([
-                { id: 'RX-301', patient: 'Ananya Sharma', meds: 'Telmisartan 40mg (1-0-0)', notes: 'Low sodium diet, BP check weekly' },
-                { id: 'RX-302', patient: 'Rajesh Varma', meds: 'Calcium + Vit D3 (0-1-0)', notes: 'Physiotherapy 2x daily' }
-            ]));
-        }
-
-        if (!localStorage.getItem('medicore_labs')) {
-            localStorage.setItem('medicore_labs', JSON.stringify([
-                { id: 'LAB-701', patient: 'Ananya Sharma', test: '12-Lead ECG & Lipid Profile', finding: 'Normal Sinus Rhythm', status: 'Verified & Released' },
-                { id: 'LAB-702', patient: 'Rajesh Varma', test: 'Digital Knee X-Ray (AP/Lat)', finding: 'Alignment Stable', status: 'Pending Doctor Review' }
-            ]));
-        }
-
-        if (!localStorage.getItem('medicore_users')) {
-            localStorage.setItem('medicore_users', JSON.stringify([
-                { email: 'dr.ramesh@medicore.in', pass: 'password123', name: 'Dr. Ramesh Kumar', role: 'doctor' },
-                { email: 'ananya.sharma@gmail.com', pass: 'password123', name: 'Ananya Sharma', role: 'patient' }
-            ]));
+        // Seed Persistent LocalStorage
+        function initStorage() {
+            if (!localStorage.getItem('medicore_patients')) {
+                localStorage.setItem('medicore_patients', JSON.stringify([
+                    { id: 'P-1001', name: 'Ananya Sharma', ageGender: '28 / F', contact: '+91 98480 22331', condition: 'Hypertension Monitoring', status: 'Stable' },
+                    { id: 'P-1002', name: 'Rajesh Varma', ageGender: '42 / M', contact: '+91 97011 44556', condition: 'Post-Op Orthopedic Care', status: 'Recovering' }
+                ]));
+            }
+            if (!localStorage.getItem('medicore_appointments')) {
+                localStorage.setItem('medicore_appointments', JSON.stringify([
+                    { id: 'APT-501', name: 'Ananya Sharma', doctor: 'Dr. Ramesh Kumar (Cardiology)', time: '2026-11-26 10:30 AM', status: 'Confirmed' },
+                    { id: 'APT-502', name: 'Rajesh Varma', doctor: 'Dr. Priya Reddy (Orthopedics)', time: '2026-11-26 11:45 AM', status: 'Checked In' }
+                ]));
+            }
+            if (!localStorage.getItem('medicore_invoices')) {
+                localStorage.setItem('medicore_invoices', JSON.stringify([
+                    { id: 'INV-901', name: 'Ananya Sharma', service: 'Cardiology Consultation & ECG', amount: '₹4,500', status: 'Paid' },
+                    { id: 'INV-902', name: 'Rajesh Varma', service: 'Orthopedic Follow-up & X-Ray', amount: '₹6,800', status: 'Pending Balance' }
+                ]));
+            }
+            if (!localStorage.getItem('medicore_beds')) {
+                localStorage.setItem('medicore_beds', JSON.stringify([
+                    { id: 'ICU-01', ward: 'Cardiac ICU', patient: 'Rajesh Varma', status: 'Occupied' },
+                    { id: 'ICU-02', ward: 'Cardiac ICU', patient: 'Vacant', status: 'Available' },
+                    { id: 'ICU-03', ward: 'Trauma ICU', patient: 'Sanitization', status: 'Cleaning' },
+                    { id: 'WRD-101', ward: 'General Ward A', patient: 'Ananya Sharma', status: 'Occupied' },
+                    { id: 'WRD-102', ward: 'General Ward A', patient: 'Vacant', status: 'Available' },
+                    { id: 'WRD-103', ward: 'General Ward B', patient: 'Vacant', status: 'Available' }
+                ]));
+            }
+            if (!localStorage.getItem('medicore_rx')) {
+                localStorage.setItem('medicore_rx', JSON.stringify([
+                    { id: 'RX-301', patient: 'Ananya Sharma', meds: 'Telmisartan 40mg (1-0-0)', notes: 'Low sodium diet; weekly BP check' },
+                    { id: 'RX-302', patient: 'Rajesh Varma', meds: 'Calcium + Vit D3 (0-1-0)', notes: 'Physiotherapy 2x daily' }
+                ]));
+            }
+            if (!localStorage.getItem('medicore_labs')) {
+                localStorage.setItem('medicore_labs', JSON.stringify([
+                    { id: 'LAB-701', patient: 'Ananya Sharma', test: '12-Lead ECG & Lipid Profile', finding: 'Normal Sinus Rhythm', status: 'Verified & Released' },
+                    { id: 'LAB-702', patient: 'Rajesh Varma', test: 'Digital Knee X-Ray (AP/Lat)', finding: 'Alignment Stable', status: 'Pending Doctor Review' }
+                ]));
+            }
+            if (!localStorage.getItem('medicore_users')) {
+                localStorage.setItem('medicore_users', JSON.stringify([
+                    { email: 'dr.ramesh@medicore.in', pass: 'password123', name: 'Dr. Ramesh Kumar', role: 'doctor' },
+                    { email: 'ananya.sharma@gmail.com', pass: 'password123', name: 'Ananya Sharma', role: 'patient' }
+                ]));
+            }
         }
 
         const modules = {
             doctor: [
-                { id: 'patients', docOnly: false, title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
-                { id: 'beds', docOnly: true, title: 'ICU & Ward Bed Occupancy', desc: 'Live critical care and inpatient ward bed tracking with one-click status updates.', list: ['Real-time ICU Availability', 'Ward Turnover Status', 'Inpatient Bed Assignment'] },
-                { id: 'prescriptions', docOnly: true, title: 'Digital E-Prescription Pad', desc: 'Author and print verified clinical prescriptions directly into patient records.', list: ['Medication & Dosage Entry', 'Clinical Follow-up Notes', 'Printable Rx Slips'] },
-                { id: 'diagnostics', docOnly: true, title: 'Lab & Diagnostic Reports', desc: 'Review pathology, ECG, and radiology findings prior to patient release.', list: ['ECG & Blood Panel Queue', 'Doctor Sign-off Verification', 'Diagnostic Findings Log'] },
-                { id: 'billing', docOnly: false, title: 'Billing & Financial Ledger', desc: 'Streamline itemized hospital billing transactions and update payment statuses.', list: ['Billing Processing', 'Payment Reconciliation', 'Itemized Invoices'] },
-                { id: 'administration', docOnly: true, title: 'Staff & Administration', desc: 'Confidential facility operations, doctor rosters, and nursing shift schedules.', list: ['Staff Shift Rosters', 'Department Duty Status', 'Resource Allocation'] }
+                { id: 'patients', docOnly: false, icon: '📋', title: 'Patient Records (EHR)', desc: 'Complete clinical logs, demographics, and electronic health records.', items: ['Electronic Health Records', 'Vitals & History', 'Registry Search'] },
+                { id: 'beds', docOnly: true, icon: '🏥', title: 'ICU & Ward Bed Grid', desc: 'Live critical care and ward bed occupancy with one-click status updates.', items: ['ICU Capacity Monitor', 'Sanitization Tracking', 'Inpatient Assignment'] },
+                { id: 'prescriptions', docOnly: true, icon: '💊', title: 'Digital E-Prescription Pad', desc: 'Author and print verified clinical prescriptions directly into patient files.', items: ['Dosage & Schedule Entry', 'Follow-up Notes', 'Instant Rx Printing'] },
+                { id: 'diagnostics', docOnly: true, icon: '🔬', title: 'Lab & Diagnostic Queue', desc: 'Review pathology, ECG, and radiology findings prior to patient release.', items: ['ECG & Blood Panels', 'Doctor Sign-Off', 'Diagnostic Findings'] },
+                { id: 'billing', docOnly: false, icon: '💳', title: 'Billing & Rupee Ledger', desc: 'Streamline itemized hospital billing and toggle payment states.', items: ['Itemized Invoices', 'Balance Reconciliation', 'Revenue Tracking'] },
+                { id: 'administration', docOnly: true, icon: '🩺', title: 'Staff & Shift Roster', desc: 'Confidential clinical rosters and specialist duty schedules.', items: ['Doctor Duty Shifts', 'ICU Nursing Roster', 'Department Coverage'] }
             ],
             patient: [
-                { id: 'patients', docOnly: false, title: 'My Health Records', desc: 'View your personal medical logs, health demographics, and clinical history safely.', list: ['My Electronic Health Records', 'Personal History Access', 'Demographic Details'] },
-                { id: 'appointments', docOnly: false, title: 'Appointments', desc: 'Check available consultation schedules, secure booking slots, and track appointment statuses.', list: ['Consultation Scheduling', 'Doctor Availability Check', 'Real-time Status Tracking'] },
-                { id: 'billing', docOnly: false, title: 'My Bills & Invoices', desc: 'Review your itemized hospital bills and payment statuses.', list: ['Invoice Payment Status', 'Itemized Statement', 'Consultation Receipts'] }
+                { id: 'patients', docOnly: false, icon: '📋', title: 'My Health Records', desc: 'View your personal medical logs, demographics, and clinical status.', items: ['Personal EHR Summary', 'Primary Diagnosis', 'Verified Contact Info'] },
+                { id: 'appointments', docOnly: false, icon: '📅', title: 'My Appointments', desc: 'Book specialist consultation slots and track real-time queue status.', items: ['Instant Slot Booking', 'Specialist Selection', 'Queue Verification'] },
+                { id: 'billing', docOnly: false, icon: '💳', title: 'My Bills & Invoices', desc: 'Review itemized Rupee (₹) hospital invoices and payment receipts.', items: ['Itemized Breakdown', 'Payment Status', 'Consultation Receipts'] }
             ]
-        };
-
-        const navContent = {
-            discover: {
-                title: "Discover MediCore Intelligence System",
-                desc: "MediCore is an enterprise-grade clinical operations platform engineered to unify patient records, appointment scheduling, and automated billing workflows with smooth animations and strict RBAC."
-            },
-            hospitals: {
-                title: "Find a MediCore Facility Near You",
-                desc: "Explore premier network locations across Vijayawada, Hyderabad, and Visakhapatnam featuring 24/7 emergency trauma care and advanced diagnostics."
-            },
-            services: {
-                title: "Comprehensive Medical Services",
-                desc: "Multi-specialty clinical departments including Cardiology, Orthopedics, Critical Care ICU, and Neurology."
-            }
         };
 
         function openAuthModal(role) {
             currentRole = role;
-            document.getElementById('auth-modal-title').innerText = role === 'doctor' ? 'Doctor Portal Authentication' : 'Patient Portal Authentication';
+            document.getElementById('auth-modal-title').innerText = role === 'doctor' ? 'Doctor Command Login' : 'Patient Self-Service Login';
             const btn = document.getElementById('auth-submit-btn');
-            btn.className = 'auth-btn ' + (role === 'doctor' ? 'btn-doc' : 'btn-pat');
-            
+            btn.className = role === 'doctor'
+                ? 'w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl transition'
+                : 'w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-slate-950 font-bold py-3 rounded-xl transition';
+
             document.getElementById('auth-email').value = role === 'doctor' ? 'dr.ramesh@medicore.in' : 'ananya.sharma@gmail.com';
             document.getElementById('auth-pass').value = 'password123';
-            
-            document.getElementById('auth-modal').style.display = 'flex';
+            document.getElementById('auth-modal').classList.remove('hidden');
         }
 
         function switchAuthTab(mode) {
             authMode = mode;
-            const signinBtn = document.getElementById('tab-signin');
-            const signupBtn = document.getElementById('tab-signup');
-            const nameGroup = document.getElementById('group-name');
+            const sIn = document.getElementById('tab-signin');
+            const sUp = document.getElementById('tab-signup');
+            const nameGrp = document.getElementById('group-name');
             const submitBtn = document.getElementById('auth-submit-btn');
 
             if (mode === 'signin') {
-                signinBtn.classList.add('active');
-                signupBtn.classList.remove('active');
-                nameGroup.style.display = 'none';
-                submitBtn.innerText = 'Sign In to Dashboard';
+                sIn.className = 'flex-1 pb-2.5 text-xs font-bold uppercase tracking-wider text-teal-400 border-b-2 border-teal-400';
+                sUp.className = 'flex-1 pb-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white';
+                nameGrp.classList.add('hidden');
+                submitBtn.innerText = 'Sign In to Workspace';
             } else {
-                signupBtn.classList.add('active');
-                signinBtn.classList.remove('active');
-                nameGroup.style.display = 'block';
-                submitBtn.innerText = 'Register & Login';
+                sUp.className = 'flex-1 pb-2.5 text-xs font-bold uppercase tracking-wider text-teal-400 border-b-2 border-teal-400';
+                sIn.className = 'flex-1 pb-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white';
+                nameGrp.classList.remove('hidden');
+                submitBtn.innerText = 'Create Account & Enter';
             }
         }
 
         function handleAuthSubmit() {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            const name = document.getElementById('auth-name').value;
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            const name = document.getElementById('auth-name').value.trim();
 
             if (!email || !pass) {
-                showToast('Please fill in all required fields.', 'error');
+                showToast('Please enter email and password.', 'error');
                 return;
             }
 
             let users = JSON.parse(localStorage.getItem('medicore_users'));
+            let activeName = currentRole === 'doctor' ? 'Dr. Ramesh Kumar' : 'Ananya Sharma';
 
             if (authMode === 'signup') {
                 if (!name) {
-                    showToast('Please provide your full name.', 'error');
+                    showToast('Please enter your full name to register.', 'error');
                     return;
                 }
-                const exists = users.find(u => u.email === email);
-                if (exists) {
-                    showToast('An account with this email already exists.', 'error');
+                if (users.find(u => u.email === email)) {
+                    showToast('Account already exists. Please Sign In.', 'error');
                     return;
                 }
                 users.push({ email, pass, name, role: currentRole });
                 localStorage.setItem('medicore_users', JSON.stringify(users));
-                showToast('Account successfully registered!');
+                activeName = name;
+                showToast('New account saved to LocalStorage!');
             } else {
-                const user = users.find(u => u.email === email && u.pass === pass);
-                if (!user) {
-                    showToast('Invalid credentials. Try registering first!', 'error');
+                const found = users.find(u => u.email === email && u.pass === pass);
+                if (!found) {
+                    showToast('Invalid credentials. Try registering a new account!', 'error');
                     return;
                 }
-                currentRole = user.role;
+                currentRole = found.role;
+                activeName = found.name;
             }
 
-            document.getElementById('auth-modal').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-            showToast(`Welcome to ${currentRole.toUpperCase()} Portal!`);
-            renderDashboard(currentRole);
+            isAuthenticated = true;
+            closeModal('auth-modal');
+            enterWorkspace(currentRole, activeName);
+            showToast(`Authenticated as ${activeName} (${currentRole.toUpperCase()})`);
+        }
+
+        function enterWorkspace(role, userName) {
+            document.getElementById('landing-view').classList.add('hidden');
+            document.getElementById('workspace-view').classList.remove('hidden');
+            document.getElementById('nav-dash-btn').classList.remove('hidden');
+
+            document.getElementById('active-user-name').innerText = userName;
+            const rolePill = document.getElementById('role-pill');
+            const avatar = document.getElementById('role-avatar');
+            const hint = document.getElementById('rbac-hint');
+
+            if (role === 'doctor') {
+                rolePill.innerText = 'DOCTOR PORTAL';
+                rolePill.className = 'ml-2 px-2.5 py-0.5 rounded-full text-[11px] uppercase tracking-wider bg-sky-500/20 text-sky-300';
+                avatar.innerText = '🩺';
+                hint.innerText = 'Showing 6 Modules (Including 4 Doctor-Exclusive Panels)';
+            } else {
+                rolePill.innerText = 'PATIENT PORTAL';
+                rolePill.className = 'ml-2 px-2.5 py-0.5 rounded-full text-[11px] uppercase tracking-wider bg-emerald-500/20 text-emerald-300';
+                avatar.innerText = '👤';
+                hint.innerText = 'Showing 3 Patient Self-Service Modules (Clinical Admin Restricted)';
+            }
+
+            renderDashboard(role);
+        }
+
+        function switchRoleQuick() {
+            const nextRole = currentRole === 'doctor' ? 'patient' : 'doctor';
+            const nextName = nextRole === 'doctor' ? 'Dr. Ramesh Kumar' : 'Ananya Sharma';
+            currentRole = nextRole;
+            enterWorkspace(nextRole, nextName);
+            showToast(`Switched demo session to ${nextRole.toUpperCase()} Portal`);
+        }
+
+        function showLanding() {
+            document.getElementById('workspace-view').classList.add('hidden');
+            document.getElementById('landing-view').classList.remove('hidden');
+            updateHeroStats();
+        }
+
+        function returnToDashboard() {
+            if (!isAuthenticated) {
+                openAuthModal('doctor');
+                return;
+            }
+            document.getElementById('landing-view').classList.add('hidden');
+            document.getElementById('workspace-view').classList.remove('hidden');
+            goHome();
+        }
+
+        function logout() {
+            isAuthenticated = false;
+            document.getElementById('nav-dash-btn').classList.add('hidden');
+            showLanding();
+            showToast('Session ended securely.');
         }
 
         function renderDashboard(role) {
-            document.getElementById('role-display').innerText = role;
             const grid = document.getElementById('module-grid');
             grid.innerHTML = '';
-
             document.getElementById('btn-add-invoice').style.display = role === 'doctor' ? 'inline-block' : 'none';
-            
+
             modules[role].forEach(mod => {
                 const card = document.createElement('div');
-                card.className = 'card';
+                card.className = 'glass-card rounded-2xl p-6 cursor-pointer relative';
                 card.onclick = () => openView(mod.id);
                 card.innerHTML = `
-                    ${mod.docOnly ? '<span class="doc-tag">Doctor Only</span>' : ''}
-                    <h3>${mod.title}</h3>
-                    <p>${mod.desc}</p>
-                    <ul>
-                        ${mod.list.map(item => `<li>${item}</li>`).join('')}
+                    ${mod.docOnly ? '<span class="absolute top-5 right-5 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30">Doctor Only</span>' : ''}
+                    <div class="w-11 h-11 rounded-xl bg-teal-500/15 text-teal-300 flex items-center justify-center text-xl mb-4">${mod.icon}</div>
+                    <h3 class="text-lg font-bold text-white mb-2">${mod.title}</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-4">${mod.desc}</p>
+                    <ul class="space-y-1.5 text-xs text-slate-300">
+                        ${mod.items.map(i => `<li class="flex items-center gap-2"><span class="text-teal-400">•</span>${i}</li>`).join('')}
                     </ul>
                 `;
                 grid.appendChild(card);
             });
 
-            loadTables();
+            renderTables();
             goHome();
         }
 
-        function loadTables() {
+        function renderTables() {
+            // Patients
             const patients = JSON.parse(localStorage.getItem('medicore_patients'));
             document.getElementById('patient-table-body').innerHTML = patients.map(p => `
-                <tr>
-                    <td>${p.id}</td>
-                    <td>${p.name}</td>
-                    <td>${p.ageGender}</td>
-                    <td>${p.contact}</td>
-                    <td>${p.condition}</td>
-                    <td><span class="status-badge status-stable">${p.status}</span></td>
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 px-4 font-mono text-teal-400">${p.id}</td>
+                    <td class="py-3.5 px-4 font-semibold text-white">${p.name}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${p.ageGender}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${p.contact}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${p.condition}</td>
+                    <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-500/15 text-teal-300">${p.status}</span></td>
                 </tr>
             `).join('');
 
+            // Appointments
             const appts = JSON.parse(localStorage.getItem('medicore_appointments'));
             document.getElementById('appt-table-body').innerHTML = appts.map(a => `
-                <tr>
-                    <td>${a.id}</td>
-                    <td>${a.name}</td>
-                    <td>${a.doctor}</td>
-                    <td>${a.time}</td>
-                    <td><span class="status-badge status-conf" onclick="toggleApptStatus('${a.id}')">${a.status}</span></td>
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 px-4 font-mono text-sky-400">${a.id}</td>
+                    <td class="py-3.5 px-4 font-semibold text-white">${a.name}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${a.doctor}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${a.time}</td>
+                    <td class="py-3.5 px-4">
+                        <button onclick="toggleApptStatus('${a.id}')" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-sky-500/15 text-sky-300 hover:bg-sky-500/25 transition">
+                            ${a.status} ↻
+                        </button>
+                    </td>
                 </tr>
             `).join('');
 
+            // Billing
             const invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
             document.getElementById('billing-table-body').innerHTML = invoices.map(i => `
-                <tr>
-                    <td>${i.id}</td>
-                    <td>${i.name}</td>
-                    <td>${i.service}</td>
-                    <td>${i.amount}</td>
-                    <td><span class="status-badge ${i.status === 'Paid' ? 'status-paid' : 'status-pending'}" onclick="toggleInvoiceStatus('${i.id}')">${i.status}</span></td>
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 px-4 font-mono text-teal-400">${i.id}</td>
+                    <td class="py-3.5 px-4 font-semibold text-white">${i.name}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${i.service}</td>
+                    <td class="py-3.5 px-4 font-bold text-white">${i.amount}</td>
+                    <td class="py-3.5 px-4">
+                        <button onclick="toggleInvoiceStatus('${i.id}')" class="px-2.5 py-1 rounded-md text-xs font-semibold ${i.status === 'Paid' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'} transition">
+                            ${i.status}
+                        </button>
+                    </td>
                 </tr>
             `).join('');
 
+            // Beds
             const beds = JSON.parse(localStorage.getItem('medicore_beds'));
             document.getElementById('bed-grid-container').innerHTML = beds.map(b => {
-                const cls = b.status === 'Available' ? 'bed-available' : (b.status === 'Occupied' ? 'bed-occupied' : 'bed-cleaning');
-                const badgeCls = b.status === 'Available' ? 'status-paid' : (b.status === 'Occupied' ? 'status-pending' : 'status-conf');
+                const borderColor = b.status === 'Available' ? 'border-l-emerald-400' : (b.status === 'Occupied' ? 'border-l-red-500' : 'border-l-amber-400');
+                const pillCls = b.status === 'Available' ? 'bg-emerald-500/15 text-emerald-300' : (b.status === 'Occupied' ? 'bg-red-500/15 text-red-300' : 'bg-amber-500/15 text-amber-300');
                 return `
-                    <div class="bed-box ${cls}" onclick="cycleBedStatus('${b.id}')">
-                        <div style="font-weight:bold; font-size:16px; margin-bottom:4px;">${b.id}</div>
-                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">${b.ward}</div>
-                        <div style="font-size:13px; margin-bottom:8px;">Patient: <strong>${b.patient}</strong></div>
-                        <span class="status-badge ${badgeCls}">${b.status}</span>
+                    <div onclick="cycleBedStatus('${b.id}')" class="bg-slate-950/90 border border-slate-800 border-l-4 ${borderColor} rounded-xl p-4 cursor-pointer hover:border-teal-400/50 transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-white text-base">${b.id}</span>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${pillCls}">${b.status}</span>
+                        </div>
+                        <div class="text-xs text-slate-400 mb-2">${b.ward}</div>
+                        <div class="text-xs text-slate-300">Occupant: <strong class="text-white">${b.patient}</strong></div>
                     </div>
                 `;
             }).join('');
 
+            // Prescriptions
             const rxList = JSON.parse(localStorage.getItem('medicore_rx'));
             document.getElementById('rx-table-body').innerHTML = rxList.map(r => `
-                <tr>
-                    <td>${r.id}</td>
-                    <td>${r.patient}</td>
-                    <td><strong>${r.meds}</strong></td>
-                    <td>${r.notes}</td>
-                    <td><button class="action-btn" style="padding:5px 10px; font-size:12px;" onclick="showToast('🖨️ Sending Rx slip to printer...')">Print Rx</button></td>
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 px-4 font-mono text-sky-400">${r.id}</td>
+                    <td class="py-3.5 px-4 font-semibold text-white">${r.patient}</td>
+                    <td class="py-3.5 px-4 text-teal-300 font-medium">${r.meds}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${r.notes}</td>
+                    <td class="py-3.5 px-4">
+                        <button onclick="showToast('🖨️ Formatted E-Prescription (${r.id}) sent to printer!')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition">Print Rx</button>
+                    </td>
                 </tr>
             `).join('');
 
+            // Labs
             const labs = JSON.parse(localStorage.getItem('medicore_labs'));
             document.getElementById('lab-table-body').innerHTML = labs.map(l => `
-                <tr>
-                    <td>${l.id}</td>
-                    <td>${l.patient}</td>
-                    <td>${l.test}</td>
-                    <td>${l.finding}</td>
-                    <td><span class="status-badge ${l.status.includes('Verified') ? 'status-paid' : 'status-pending'}" onclick="toggleLabStatus('${l.id}')">${l.status}</span></td>
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 px-4 font-mono text-sky-400">${l.id}</td>
+                    <td class="py-3.5 px-4 font-semibold text-white">${l.patient}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${l.test}</td>
+                    <td class="py-3.5 px-4 text-slate-300">${l.finding}</td>
+                    <td class="py-3.5 px-4">
+                        <button onclick="toggleLabStatus('${l.id}')" class="px-2.5 py-1 rounded-md text-xs font-semibold ${l.status.includes('Verified') ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'} transition">
+                            ${l.status}
+                        </button>
+                    </td>
                 </tr>
             `).join('');
+
+            updateHeroStats();
+        }
+
+        function updateHeroStats() {
+            const beds = JSON.parse(localStorage.getItem('medicore_beds') || '[]');
+            const appts = JSON.parse(localStorage.getItem('medicore_appointments') || '[]');
+            if (beds.length) {
+                const occ = beds.filter(b => b.status === 'Occupied').length;
+                const pct = Math.round((occ / beds.length) * 100);
+                document.getElementById('hero-bed-stat').innerText = `${pct}% Occupied`;
+            }
+            document.getElementById('hero-appt-stat').innerText = `${appts.length} Scheduled`;
         }
 
         function cycleBedStatus(id) {
@@ -950,14 +906,14 @@
             let beds = JSON.parse(localStorage.getItem('medicore_beds'));
             beds = beds.map(b => {
                 if (b.id === id) {
-                    if (b.status === 'Available') { b.status = 'Occupied'; b.patient = 'Admitted Patient'; }
+                    if (b.status === 'Available') { b.status = 'Occupied'; b.patient = 'Admitted Inpatient'; }
                     else if (b.status === 'Occupied') { b.status = 'Cleaning'; b.patient = 'Sanitization'; }
                     else { b.status = 'Available'; b.patient = 'Vacant'; }
                 }
                 return b;
             });
             localStorage.setItem('medicore_beds', JSON.stringify(beds));
-            loadTables();
+            renderTables();
             showToast(`Bed ${id} status updated.`);
         }
 
@@ -965,19 +921,17 @@
             if (currentRole !== 'doctor') return;
             let labs = JSON.parse(localStorage.getItem('medicore_labs'));
             labs = labs.map(l => {
-                if (l.id === id) {
-                    l.status = l.status === 'Verified & Released' ? 'Pending Doctor Review' : 'Verified & Released';
-                }
+                if (l.id === id) l.status = l.status === 'Verified & Released' ? 'Pending Doctor Review' : 'Verified & Released';
                 return l;
             });
             localStorage.setItem('medicore_labs', JSON.stringify(labs));
-            loadTables();
-            showToast('Lab report verification status updated.');
+            renderTables();
+            showToast('Lab verification status updated.');
         }
 
         function toggleInvoiceStatus(id) {
             if (currentRole !== 'doctor') {
-                showToast('Only authorized doctors can modify billing status.', 'error');
+                showToast('Only authorized doctors/billing staff can update payment status.', 'error');
                 return;
             }
             let invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
@@ -986,110 +940,79 @@
                 return i;
             });
             localStorage.setItem('medicore_invoices', JSON.stringify(invoices));
-            loadTables();
-            showToast('Invoice payment status toggled.');
+            renderTables();
+            showToast(`Invoice ${id} payment status updated.`);
         }
 
         function toggleApptStatus(id) {
             let appts = JSON.parse(localStorage.getItem('medicore_appointments'));
             appts = appts.map(a => {
-                if (a.id === id) a.status = a.status === 'Confirmed' ? 'Checked In' : 'Confirmed';
+                if (a.id === id) {
+                    a.status = a.status === 'Confirmed' ? 'Checked In' : (a.status === 'Checked In' ? 'Completed' : 'Confirmed');
+                }
                 return a;
             });
             localStorage.setItem('medicore_appointments', JSON.stringify(appts));
-            loadTables();
-            showToast('Appointment verification updated.');
+            renderTables();
+            showToast(`Appointment ${id} queue status updated.`);
         }
 
-        function openAppointmentModal() { document.getElementById('modal-appointment').style.display = 'flex'; }
-        function openInvoiceModal() {
-            if (currentRole !== 'doctor') return;
-            document.getElementById('modal-invoice').style.display = 'flex';
-        }
-        function closeModals() {
-            document.getElementById('modal-appointment').style.display = 'none';
-            document.getElementById('modal-invoice').style.display = 'none';
-            document.getElementById('modal-rx').style.display = 'none';
-        }
-        function openRxModal() {
-            if (currentRole !== 'doctor') return;
-            document.getElementById('modal-rx').style.display = 'flex';
-        }
-
-        function saveNewPrescription() {
-            if (currentRole !== 'doctor') return;
-            const patient = document.getElementById('rx-patient').value;
-            const meds = document.getElementById('rx-meds').value;
-            const notes = document.getElementById('rx-notes').value;
-            if (!patient || !meds) { showToast('Please enter patient name and medication.', 'error'); return; }
-
-            let rxList = JSON.parse(localStorage.getItem('medicore_rx'));
-            rxList.push({ id: 'RX-' + Math.floor(400 + Math.random() * 500), patient, meds, notes });
-            localStorage.setItem('medicore_rx', JSON.stringify(rxList));
-
-            closeModals();
-            loadTables();
-            showToast('E-Prescription issued successfully!');
-        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function saveNewAppointment() {
-            const name = document.getElementById('appt-patient-name').value;
+            const name = document.getElementById('appt-patient-name').value.trim();
             const doctor = document.getElementById('appt-doctor').value;
-            const time = document.getElementById('appt-time').value;
-            if (!name) { showToast('Please enter patient name.', 'error'); return; }
+            const time = document.getElementById('appt-time').value.trim();
+            if (!name) { showToast('Please enter a patient name.', 'error'); return; }
 
             let appts = JSON.parse(localStorage.getItem('medicore_appointments'));
-            appts.push({ id: 'APT-' + Math.floor(600 + Math.random() * 300), name, doctor, time, status: 'Confirmed' });
+            appts.push({ id: 'APT-' + Math.floor(600 + Math.random() * 350), name, doctor, time, status: 'Confirmed' });
             localStorage.setItem('medicore_appointments', JSON.stringify(appts));
-
-            closeModals();
-            loadTables();
-            showToast('Appointment scheduled successfully!');
+            document.getElementById('appt-patient-name').value = '';
+            closeModal('modal-appointment');
+            renderTables();
+            showToast('Consultation slot booked & saved!');
         }
 
         function saveNewInvoice() {
             if (currentRole !== 'doctor') return;
-            const name = document.getElementById('inv-patient-name').value;
-            const service = document.getElementById('inv-service').value;
-            const amount = document.getElementById('inv-amount').value;
+            const name = document.getElementById('inv-patient-name').value.trim();
+            const service = document.getElementById('inv-service').value.trim();
+            const amount = document.getElementById('inv-amount').value.trim();
             if (!name) { showToast('Please enter patient name.', 'error'); return; }
 
             let invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
-            invoices.push({ id: 'INV-' + Math.floor(900 + Math.random() * 100), name, service, amount, status: 'Pending Balance' });
+            invoices.push({ id: 'INV-' + Math.floor(903 + Math.random() * 90), name, service, amount, status: 'Pending Balance' });
             localStorage.setItem('medicore_invoices', JSON.stringify(invoices));
-
-            closeModals();
-            loadTables();
-            showToast('Invoice generated successfully!');
+            document.getElementById('inv-patient-name').value = '';
+            closeModal('modal-invoice');
+            renderTables();
+            showToast('Rupee invoice added to ledger!');
         }
 
-        function filterPatientTable() {
-            const query = document.getElementById('patient-search').value.toLowerCase();
-            document.querySelectorAll('#patient-table-body tr').forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+        function saveNewPrescription() {
+            if (currentRole !== 'doctor') return;
+            const patient = document.getElementById('rx-patient').value.trim();
+            const meds = document.getElementById('rx-meds').value.trim();
+            const notes = document.getElementById('rx-notes').value.trim();
+            if (!patient || !meds) { showToast('Enter patient name and medication.', 'error'); return; }
+
+            let rxList = JSON.parse(localStorage.getItem('medicore_rx'));
+            rxList.push({ id: 'RX-' + Math.floor(400 + Math.random() * 500), patient, meds, notes });
+            localStorage.setItem('medicore_rx', JSON.stringify(rxList));
+            document.getElementById('rx-patient').value = '';
+            document.getElementById('rx-meds').value = '';
+            closeModal('modal-rx');
+            renderTables();
+            showToast('Digital E-Prescription issued!');
+        }
+
+        function filterTable(tbodyId, query) {
+            const q = query.toLowerCase();
+            document.querySelectorAll(`#${tbodyId} tr`).forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
             });
-        }
-
-        function filterBillingTable() {
-            const query = document.getElementById('billing-search').value.toLowerCase();
-            document.querySelectorAll('#billing-table-body tr').forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
-            });
-        }
-
-        function logout() {
-            document.getElementById('app-screen').style.display = 'none';
-            openAuthModal('doctor');
-            showToast('Logged out securely.');
-        }
-
-        function openNavInfo(key) {
-            document.getElementById('dashboard-view').style.display = 'none';
-            document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
-            const info = navContent[key];
-            document.getElementById('nav-info-title').innerText = info.title;
-            document.getElementById('nav-info-desc').innerText = info.desc;
-            document.getElementById('view-nav-info').style.display = 'block';
         }
 
         function openView(viewId) {
@@ -1097,19 +1020,18 @@
                 showToast('Access Denied: Restricted to Doctor Portal.', 'error');
                 return;
             }
-            document.getElementById('dashboard-view').style.display = 'none';
-            document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
-            document.getElementById('view-' + viewId).style.display = 'block';
+            document.getElementById('dashboard-grid-section').classList.add('hidden');
+            document.querySelectorAll('.detail-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + viewId).classList.remove('hidden');
         }
 
         function goHome() {
-            document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
-            document.getElementById('dashboard-view').style.display = 'block';
+            document.querySelectorAll('.detail-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById('dashboard-grid-section').classList.remove('hidden');
         }
 
-        window.onload = () => {
-            openAuthModal('doctor');
-        };
+        initStorage();
+        updateHeroStats();
     </script>
 </body>
 </html>
