@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediCore Intelligence System</title>
+    <title>MediCore Intelligence System - Review 1</title>
     <style>
         :root {
             --bg-deep: #0e131f;
@@ -90,8 +90,8 @@
             padding: 40px 20px;
         }
 
-        /* Login Modal Card Overlay */
-        .login-overlay {
+        /* Modals & Overlays */
+        .modal-overlay {
             display: flex;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -100,25 +100,42 @@
             align-items: center;
             z-index: 2000;
         }
-        .auth-card {
+        .auth-card, .custom-modal-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            padding: 40px;
+            padding: 35px;
             border-radius: 16px;
             text-align: center;
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
-        .auth-card h2 { color: var(--accent-blue); margin-bottom: 10px; }
-        .auth-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+        .auth-card h2, .custom-modal-card h2 { color: var(--accent-blue); margin-bottom: 5px; }
+        .auth-card p, .custom-modal-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
         
+        .tab-row {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .tab-btn.active { color: var(--accent-teal); border-bottom: 2px solid var(--accent-teal); }
+
         .input-group {
             margin-bottom: 15px;
             text-align: left;
         }
         .input-group label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 5px; }
-        .input-field {
+        .input-field, .select-field {
             width: 100%;
             padding: 10px;
             border-radius: 8px;
@@ -126,10 +143,12 @@
             background: var(--bg-deep);
             color: white;
             box-sizing: border-box;
+            font-family: inherit;
+            font-size: 14px;
         }
-        .input-field:focus { outline: none; border-color: var(--accent-blue); }
+        .input-field:focus, .select-field:focus { outline: none; border-color: var(--accent-blue); }
 
-        .auth-btn {
+        .auth-btn, .modal-submit-btn {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
@@ -141,36 +160,14 @@
         }
         .btn-doc { background: #2563eb; color: white; }
         .btn-pat { background: #059669; color: white; }
-        .auth-btn:hover { opacity: 0.9; }
+        .auth-btn:hover, .modal-submit-btn:hover { opacity: 0.9; }
 
         /* Hero / Overview Section */
-        .hero-section {
-            text-align: left;
-            margin-bottom: 30px;
-        }
-        .hero-badge {
-            font-size: 12px;
-            letter-spacing: 2px;
-            color: var(--accent-teal);
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .hero-section h1 {
-            font-size: 42px;
-            margin: 0 0 15px 0;
-            color: #ffffff;
-            font-weight: 700;
-        }
-        .hero-section p {
-            color: var(--text-muted);
-            font-size: 15px;
-            line-height: 1.6;
-            max-width: 900px;
-            margin-bottom: 10px;
-        }
+        .hero-section { text-align: left; margin-bottom: 30px; }
+        .hero-badge { font-size: 12px; letter-spacing: 2px; color: var(--accent-teal); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; }
+        .hero-section h1 { font-size: 42px; margin: 0 0 15px 0; color: #ffffff; font-weight: 700; }
+        .hero-section p { color: var(--text-muted); font-size: 15px; line-height: 1.6; max-width: 900px; margin-bottom: 10px; }
 
-        /* Pulse line */
         .pulse-line {
             height: 35px;
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 50' preserveAspectRatio='none'%3E%3Cpath d='M0,25 L200,25 L220,10 L240,40 L260,20 L280,30 L300,25 L600,25 L620,5 L640,45 L660,25 L1000,25' fill='none' stroke='%2314b8a6' stroke-width='2.5'/%3E%3C/svg%3E") left no-repeat;
@@ -200,18 +197,13 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 30px -10px rgba(20, 184, 166, 0.2);
         }
-        .card-stat {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--accent-teal);
-            margin-bottom: 8px;
-        }
+        .card-stat { font-size: 32px; font-weight: bold; color: var(--accent-teal); margin-bottom: 8px; }
         .card h3 { margin: 0 0 10px 0; color: white; font-size: 20px; }
         .card p { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 0; }
         .card ul { padding-left: 16px; color: var(--text-muted); font-size: 13px; margin: 15px 0 0 0; }
         .card li { margin-bottom: 6px; }
 
-        /* Detailed Views */
+        /* Detailed Views & Search Bars */
         .detail-view {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -223,7 +215,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-deep);
+            color: white;
+            font-size: 13px;
+            width: 250px;
         }
         .action-btn {
             background: var(--accent-teal);
@@ -245,26 +246,21 @@
             cursor: pointer;
             font-size: 13px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            text-align: left;
-            padding: 14px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: left; padding: 14px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
         th { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
         .status-badge {
             padding: 5px 12px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
         }
         .status-stable { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
         .status-conf { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .status-paid { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
     </style>
 </head>
 <body>
@@ -272,37 +268,96 @@
     <!-- TOP NAVIGATION HEADER -->
     <div class="navbar">
         <div class="nav-left">
-            <div class="logo" onclick="showLoginForm('doctor')">Medi<span>Core</span></div>
+            <div class="logo" onclick="openNavInfo('discover')">Medi<span>Core</span></div>
             <button class="nav-item" onclick="openNavInfo('discover')">DISCOVER MEDICORE</button>
             <button class="nav-item" onclick="openNavInfo('hospitals')">FIND HOSPITAL</button>
             <button class="nav-item" onclick="openNavInfo('services')">MEDICAL SERVICES</button>
         </div>
         <div class="nav-right">
             <div class="emergency-pill">📞 EMERGENCY 1066</div>
-            <button class="auth-badge-btn" onclick="showLoginForm('doctor')">Doctor Portal</button>
-            <button class="auth-badge-btn" onclick="showLoginForm('patient')" style="background: #059669; color: white; border: none;">Patient Portal</button>
+            <button class="auth-badge-btn" onclick="openAuthModal('doctor')">Doctor Portal</button>
+            <button class="auth-badge-btn" onclick="openAuthModal('patient')" style="background: #059669; color: white; border: none;">Patient Portal</button>
         </div>
     </div>
 
-    <!-- LOGIN MODAL OVERLAY -->
-    <div id="login-overlay" class="login-overlay">
+    <!-- AUTHENTICATION MODAL (SIGN IN / SIGN UP) -->
+    <div id="auth-modal" class="modal-overlay">
         <div class="auth-card">
-            <h2 id="login-title">Portal Login</h2>
-            <p>Enter your credentials to access your secure workspace.</p>
+            <h2 id="auth-modal-title">Doctor Portal</h2>
+            <p>Secure authentication with LocalStorage persistence.</p>
+            
+            <div class="tab-row">
+                <button class="tab-btn active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+                <button class="tab-btn" id="tab-signup" onclick="switchAuthTab('signup')">Register Account</button>
+            </div>
+
+            <div class="input-group" id="group-name" style="display: none;">
+                <label>Full Name</label>
+                <input type="text" id="auth-name" class="input-field" placeholder="Dr. Name / Patient Name">
+            </div>
             <div class="input-group">
                 <label>Email Address</label>
-                <input type="email" id="login-email" class="input-field" placeholder="name@medicore.in">
+                <input type="email" id="auth-email" class="input-field" placeholder="name@medicore.in">
             </div>
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" id="login-pass" class="input-field" placeholder="••••••••">
+                <input type="password" id="auth-pass" class="input-field" placeholder="••••••••">
             </div>
-            <button class="auth-btn" id="login-submit-btn" onclick="handleLogin()">Sign In</button>
+
+            <button class="auth-btn btn-doc" id="auth-submit-btn" onclick="handleAuthSubmit()">Sign In to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM APPOINTMENT MODAL -->
+    <div id="modal-appointment" class="modal-overlay" style="display: none;">
+        <div class="custom-modal-card">
+            <h2>New Appointment</h2>
+            <p>Schedule a real-time consultation slot.</p>
+            <div class="input-group">
+                <label>Patient Name</label>
+                <input type="text" id="appt-patient-name" class="input-field" placeholder="e.g. Priya Sharma">
+            </div>
+            <div class="input-group">
+                <label>Assigned Doctor / Department</label>
+                <select id="appt-doctor" class="select-field">
+                    <option>Dr. Ramesh Kumar (Cardiology)</option>
+                    <option>Dr. Priya Reddy (Orthopedics)</option>
+                    <option>Dr. Suresh Varma (Neurology)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Appointment Timestamp</label>
+                <input type="text" id="appt-time" class="input-field" value="2026-06-08 10:00 AM">
+            </div>
+            <button class="modal-submit-btn btn-doc" onclick="saveNewAppointment()">Confirm & Schedule</button>
+            <button class="back-text" onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM INVOICE MODAL -->
+    <div id="modal-invoice" class="modal-overlay" style="display: none;">
+        <div class="custom-modal-card">
+            <h2>Generate New Invoice</h2>
+            <p>Create itemized hospital billing entries.</p>
+            <div class="input-group">
+                <label>Patient Name</label>
+                <input type="text" id="inv-patient-name" class="input-field" placeholder="e.g. Priya Sharma">
+            </div>
+            <div class="input-group">
+                <label>Service Details</label>
+                <input type="text" id="inv-service" class="input-field" value="General Consultation & Diagnostics">
+            </div>
+            <div class="input-group">
+                <label>Amount (₹)</label>
+                <input type="text" id="inv-amount" class="input-field" value="₹3,500">
+            </div>
+            <button class="modal-submit-btn btn-pat" onclick="saveNewInvoice()">Generate Invoice</button>
+            <button class="back-text" onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
     <div class="wrapper">
-        <!-- MAIN DASHBOARD CONTENT (Hidden until logged in) -->
+        <!-- MAIN DASHBOARD CONTENT -->
         <div id="app-screen" style="display: none;">
             
             <div class="hero-section">
@@ -314,7 +369,7 @@
 
             <!-- ACTIVE ROLE BANNER -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px;">
-                <div>Active View Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);"></strong> (Secured)</div>
+                <div>Active View Role: <strong id="role-display" style="text-transform: uppercase; color: var(--accent-blue);"></strong> (Secured Session)</div>
                 <button onclick="logout()" style="background: #dc2626; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;">Logout</button>
             </div>
 
@@ -333,8 +388,11 @@
 
             <!-- PATIENT RECORDS VIEW -->
             <div id="view-patients" class="detail-view">
-                <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                <h2 style="margin-top: 20px;">Patient Records Management</h2>
+                <div class="header-action-row">
+                    <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
+                    <input type="text" id="patient-search" class="search-bar" placeholder="Search patients by name or ID..." onkeyup="filterPatientTable()">
+                </div>
+                <h2>Patient Records Management</h2>
                 <p style="color: var(--text-muted); font-size: 13px;">Active registry directory tracking authenticated patients, vitals, and integrated Electronic Health Records (EHR).</p>
                 <table>
                     <thead>
@@ -347,24 +405,7 @@
                             <th>Action Status</th>
                         </tr>
                     </thead>
-                    <tbody id="patient-table-body">
-                        <tr>
-                            <td>P-1001</td>
-                            <td>Ananya Sharma</td>
-                            <td>28 / F</td>
-                            <td>+91 98480 22331</td>
-                            <td>Hypertension Monitoring</td>
-                            <td><span class="status-badge status-stable">Stable</span></td>
-                        </tr>
-                        <tr>
-                            <td>P-1002</td>
-                            <td>Rajesh Varma</td>
-                            <td>42 / M</td>
-                            <td>+91 97011 44556</td>
-                            <td>Post-Operative Orthopedic</td>
-                            <td><span class="status-badge status-stable">Recovering</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="patient-table-body"></tbody>
                 </table>
             </div>
 
@@ -372,7 +413,7 @@
             <div id="view-appointments" class="detail-view">
                 <div class="header-action-row">
                     <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <button class="action-btn" onclick="addAppointment()">+ Add New Appointment</button>
+                    <button class="action-btn" onclick="openAppointmentModal()">+ Add New Appointment</button>
                 </div>
                 <h2>Consultation & Appointment Schedule</h2>
                 <p style="color: var(--text-muted); font-size: 13px;">Real-time doctor appointment calendar, live consultation time slots, and queue management metrics.</p>
@@ -386,22 +427,7 @@
                             <th>Status Verification</th>
                         </tr>
                     </thead>
-                    <tbody id="appt-table-body">
-                        <tr>
-                            <td>APT-501</td>
-                            <td>Ananya Sharma</td>
-                            <td>Dr. Ramesh Kumar (Cardiology)</td>
-                            <td>2026-06-07 10:30 AM</td>
-                            <td><span class="status-badge status-conf">Confirmed</span></td>
-                        </tr>
-                        <tr>
-                            <td>APT-502</td>
-                            <td>Rajesh Varma</td>
-                            <td>Dr. Priya Reddy (Orthopedics)</td>
-                            <td>2026-06-07 11:45 AM</td>
-                            <td><span class="status-badge status-conf">Checked In</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="appt-table-body"></tbody>
                 </table>
             </div>
 
@@ -409,10 +435,11 @@
             <div id="view-billing" class="detail-view">
                 <div class="header-action-row">
                     <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-                    <button class="action-btn" onclick="addInvoice()">+ Add New Invoice</button>
+                    <input type="text" id="billing-search" class="search-bar" placeholder="Search invoices..." onkeyup="filterBillingTable()">
+                    <button class="action-btn" onclick="openInvoiceModal()">+ Add New Invoice</button>
                 </div>
                 <h2>Billing & Prescriptions</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.</p>
+                <p style="color: var(--text-muted); font-size: 13px;">Streamline itemized hospital billing transactions. Click status badges to toggle payment state.</p>
                 <table>
                     <thead>
                         <tr>
@@ -423,22 +450,7 @@
                             <th>Payment Status</th>
                         </tr>
                     </thead>
-                    <tbody id="billing-table-body">
-                        <tr>
-                            <td>INV-901</td>
-                            <td>Ananya Sharma</td>
-                            <td>Cardiology Consultation & Labs</td>
-                            <td>₹4,500</td>
-                            <td><span class="status-badge status-stable">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td>INV-902</td>
-                            <td>Rajesh Varma</td>
-                            <td>Orthopedic Follow-up & X-Ray</td>
-                            <td>₹6,800</td>
-                            <td><span class="status-badge status-conf">Pending Balance</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="billing-table-body"></tbody>
                 </table>
             </div>
 
@@ -458,20 +470,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>DOC-201</td>
-                            <td>Dr. Ramesh Kumar</td>
-                            <td>Cardiology</td>
-                            <td>08:00 AM - 04:00 PM</td>
-                            <td><span class="status-badge status-stable">On Duty</span></td>
-                        </tr>
-                        <tr>
-                            <td>NUR-405</td>
-                            <td>Nurse Swathi Rao</td>
-                            <td>Emergency / ICU</td>
-                            <td>02:00 PM - 10:00 PM</td>
-                            <td><span class="status-badge status-conf">Active</span></td>
-                        </tr>
+                        <tr><td>DOC-201</td><td>Dr. Ramesh Kumar</td><td>Cardiology</td><td>08:00 AM - 04:00 PM</td><td><span class="status-badge status-stable">On Duty</span></td></tr>
+                        <tr><td>NUR-405</td><td>Nurse Swathi Rao</td><td>Emergency / ICU</td><td>02:00 PM - 10:00 PM</td><td><span class="status-badge status-conf">Active</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -480,60 +480,132 @@
 
     <script>
         let currentRole = 'doctor';
-        let isLoggedIn = false;
+        let authMode = 'signin'; // 'signin' or 'signup'
+
+        // LocalStorage Initialization for Hackathon Review 1 persistence
+        if (!localStorage.getItem('medicore_patients')) {
+            localStorage.setItem('medicore_patients', JSON.stringify([
+                { id: 'P-1001', name: 'Ananya Sharma', ageGender: '28 / F', contact: '+91 98480 22331', condition: 'Hypertension Monitoring', status: 'Stable' },
+                { id: 'P-1002', name: 'Rajesh Varma', ageGender: '42 / M', contact: '+91 97011 44556', condition: 'Post-Operative Orthopedic', status: 'Recovering' }
+            ]));
+        }
+
+        if (!localStorage.getItem('medicore_appointments')) {
+            localStorage.setItem('medicore_appointments', JSON.stringify([
+                { id: 'APT-501', name: 'Ananya Sharma', doctor: 'Dr. Ramesh Kumar (Cardiology)', time: '2026-06-07 10:30 AM', status: 'Confirmed' },
+                { id: 'APT-502', name: 'Rajesh Varma', doctor: 'Dr. Priya Reddy (Orthopedics)', time: '2026-06-07 11:45 AM', status: 'Checked In' }
+            ]));
+        }
+
+        if (!localStorage.getItem('medicore_invoices')) {
+            localStorage.setItem('medicore_invoices', JSON.stringify([
+                { id: 'INV-901', name: 'Ananya Sharma', service: 'Cardiology Consultation & Labs', amount: '₹4,500', status: 'Paid' },
+                { id: 'INV-902', name: 'Rajesh Varma', service: 'Orthopedic Follow-up & X-Ray', amount: '₹6,800', status: 'Pending Balance' }
+            ]));
+        }
+
+        if (!localStorage.getItem('medicore_users')) {
+            localStorage.setItem('medicore_users', JSON.stringify([
+                { email: 'dr.ramesh@medicore.in', pass: 'password123', name: 'Dr. Ramesh Kumar', role: 'doctor' },
+                { email: 'ananya.sharma@gmail.com', pass: 'password123', name: 'Ananya Sharma', role: 'patient' }
+            ]));
+        }
 
         const modules = {
             doctor: [
-                { id: 'patients', stat: '2 Active', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
-                { id: 'billing', stat: '₹11,300 Open', title: 'Billing & Prescriptions', desc: 'Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.', list: ['Digital Prescriptions', 'Billing Processing', 'Insurance Integration'] },
-                { id: 'administration', stat: '38 Beds', title: 'Staff & Administration', desc: 'Optimize comprehensive facility operations through strategic resource allocation and staff shift management.', list: ['Staff Shift Rosters', 'Resource Allocation', 'Patient Care Optimization'] }
+                { id: 'patients', title: 'Patient Records', desc: 'Maintain complete medical logs, demographics, and clinical electronic health files securely.', list: ['Electronic Health Records (EHR)', 'Medical History Access', 'Patient Demographics'] },
+                { id: 'billing', title: 'Billing & Prescriptions', desc: 'Streamline itemized hospital billing transactions and manage secure digital prescriptions seamlessly.', list: ['Digital Prescriptions', 'Billing Processing', 'Insurance Integration'] },
+                { id: 'administration', title: 'Staff & Administration', desc: 'Optimize comprehensive facility operations through strategic resource allocation and staff shift management.', list: ['Staff Shift Rosters', 'Resource Allocation', 'Patient Care Optimization'] }
             ],
             patient: [
-                { id: 'patients', stat: 'Verified', title: 'Patient Records', desc: 'View your personal medical logs, health demographics, and clinical history safely.', list: ['My Electronic Health Records', 'Personal History Access', 'Demographic Details'] },
-                { id: 'appointments', stat: '2 Scheduled', title: 'Appointments', desc: 'Check available consultation schedules, secure booking slots, and track appointment statuses.', list: ['Consultation Scheduling', 'Doctor Availability Check', 'Real-time Status Tracking'] },
-                { id: 'billing', stat: '1 Pending', title: 'Billing & Prescriptions', desc: 'Review your itemized hospital bills, payment statuses, and active digital prescriptions.', list: ['Prescription Downloads', 'Invoice Payment Status', 'Itemized Statement'] }
+                { id: 'patients', title: 'Patient Records', desc: 'View your personal medical logs, health demographics, and clinical history safely.', list: ['My Electronic Health Records', 'Personal History Access', 'Demographic Details'] },
+                { id: 'appointments', title: 'Appointments', desc: 'Check available consultation schedules, secure booking slots, and track appointment statuses.', list: ['Consultation Scheduling', 'Doctor Availability Check', 'Real-time Status Tracking'] },
+                { id: 'billing', title: 'Billing & Prescriptions', desc: 'Review your itemized hospital bills, payment statuses, and active digital prescriptions.', list: ['Prescription Downloads', 'Invoice Payment Status', 'Itemized Statement'] }
             ]
         };
 
         const navContent = {
             discover: {
                 title: "Discover MediCore Intelligence System",
-                desc: "MediCore is an enterprise-grade clinical operations platform engineered to unify patient records, appointment scheduling, and automated billing workflows. Designed with robust localization for Indian healthcare networks, it ensures seamless role-based synchronization between clinical staff and patients."
+                desc: "MediCore is an enterprise-grade clinical operations platform engineered to unify patient records, appointment scheduling, and automated billing workflows with persistent LocalStorage database support."
             },
             hospitals: {
                 title: "Find a MediCore Facility Near You",
-                desc: "Explore our premier network locations across major metropolitan and regional hubs in India, including Vijayawada (Governorpet & NTR Complex), Hyderabad, and Visakhapatnam. All facilities feature 24/7 emergency trauma care and advanced diagnostic laboratories."
+                desc: "Explore premier network locations across Vijayawada, Hyderabad, and Visakhapatnam featuring 24/7 emergency trauma care and advanced diagnostics."
             },
             services: {
                 title: "Comprehensive Medical Services",
-                desc: "We offer multi-specialty clinical departments including Cardiology, Orthopedics, Emergency & Critical Care ICU, Neurology, and Pediatrics, backed by real-time Electronic Health Record (EHR) management and digital prescription dispatch."
+                desc: "Multi-specialty clinical departments including Cardiology, Orthopedics, Critical Care ICU, and Neurology."
             }
         };
 
-        function showLoginForm(role) {
+        function openAuthModal(role) {
             currentRole = role;
-            const title = role === 'doctor' ? 'Doctor Portal Login' : 'Patient Portal Login';
-            const btnClass = role === 'doctor' ? 'btn-doc' : 'btn-pat';
+            document.getElementById('auth-modal-title').innerText = role === 'doctor' ? 'Doctor Portal Authentication' : 'Patient Portal Authentication';
+            const btn = document.getElementById('auth-submit-btn');
+            btn.className = 'auth-btn ' + (role === 'doctor' ? 'btn-doc' : 'btn-pat');
             
-            document.getElementById('login-title').innerText = title;
-            const submitBtn = document.getElementById('login-submit-btn');
-            submitBtn.className = 'auth-btn ' + btnClass;
+            document.getElementById('auth-email').value = role === 'doctor' ? 'dr.ramesh@medicore.in' : 'ananya.sharma@gmail.com';
+            document.getElementById('auth-pass').value = 'password123';
             
-            document.getElementById('login-email').value = role === 'doctor' ? 'dr.ramesh@medicore.in' : 'ananya.sharma@gmail.com';
-            document.getElementById('login-pass').value = 'password123';
-            
-            document.getElementById('login-overlay').style.display = 'flex';
+            document.getElementById('auth-modal').style.display = 'flex';
         }
 
-        function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            if(!email) {
-                alert('Please enter your email credentials.');
+        function switchAuthTab(mode) {
+            authMode = mode;
+            const signinBtn = document.getElementById('tab-signin');
+            const signupBtn = document.getElementById('tab-signup');
+            const nameGroup = document.getElementById('group-name');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            if (mode === 'signin') {
+                signinBtn.classList.add('active');
+                signupBtn.classList.remove('active');
+                nameGroup.style.display = 'none';
+                submitBtn.innerText = 'Sign In to Dashboard';
+            } else {
+                signupBtn.classList.add('active');
+                signinBtn.classList.remove('active');
+                nameGroup.style.display = 'block';
+                submitBtn.innerText = 'Register & Login';
+            }
+        }
+
+        function handleAuthSubmit() {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const name = document.getElementById('auth-name').value;
+
+            if (!email || !pass) {
+                alert('Please fill in all required fields.');
                 return;
             }
 
-            isLoggedIn = true;
-            document.getElementById('login-overlay').style.display = 'none';
+            let users = JSON.parse(localStorage.getItem('medicore_users'));
+
+            if (authMode === 'signup') {
+                if (!name) {
+                    alert('Please provide your full name.');
+                    return;
+                }
+                const exists = users.find(u => u.email === email);
+                if (exists) {
+                    alert('An account with this email already exists. Please sign in.');
+                    return;
+                }
+                users.push({ email, pass, name, role: currentRole });
+                localStorage.setItem('medicore_users', JSON.stringify(users));
+                alert('Account created and registered successfully in LocalStorage!');
+            } else {
+                const user = users.find(u => u.email === email && u.pass === pass);
+                if (!user) {
+                    alert('Invalid credentials or user not found. Try registering first!');
+                    return;
+                }
+                currentRole = user.role;
+            }
+
+            document.getElementById('auth-modal').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
             renderDashboard(currentRole);
         }
@@ -548,7 +620,6 @@
                 card.className = 'card';
                 card.onclick = () => openView(mod.id);
                 card.innerHTML = `
-                    <div class="card-stat">${mod.stat}</div>
                     <h3>${mod.title}</h3>
                     <p>${mod.desc}</p>
                     <ul>
@@ -557,21 +628,140 @@
                 `;
                 grid.appendChild(card);
             });
+
+            loadTables();
             goHome();
         }
 
+        function loadTables() {
+            // Load Patients
+            const patients = JSON.parse(localStorage.getItem('medicore_patients'));
+            const pTbody = document.getElementById('patient-table-body');
+            pTbody.innerHTML = patients.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.name}</td>
+                    <td>${p.ageGender}</td>
+                    <td>${p.contact}</td>
+                    <td>${p.condition}</td>
+                    <td><span class="status-badge status-stable">${p.status}</span></td>
+                </tr>
+            `).join('');
+
+            // Load Appointments
+            const appts = JSON.parse(localStorage.getItem('medicore_appointments'));
+            const aTbody = document.getElementById('appt-table-body');
+            aTbody.innerHTML = appts.map(a => `
+                <tr>
+                    <td>${a.id}</td>
+                    <td>${a.name}</td>
+                    <td>${a.doctor}</td>
+                    <td>${a.time}</td>
+                    <td><span class="status-badge status-conf" onclick="toggleApptStatus('${a.id}')">${a.status}</span></td>
+                </tr>
+            `).join('');
+
+            // Load Invoices
+            const invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
+            const bTbody = document.getElementById('billing-table-body');
+            bTbody.innerHTML = invoices.map(i => `
+                <tr>
+                    <td>${i.id}</td>
+                    <td>${i.name}</td>
+                    <td>${i.service}</td>
+                    <td>${i.amount}</td>
+                    <td><span class="status-badge ${i.status === 'Paid' ? 'status-paid' : 'status-pending'}" onclick="toggleInvoiceStatus('${i.id}')">${i.status} (Click to toggle)</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleInvoiceStatus(id) {
+            let invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
+            invoices = invoices.map(i => {
+                if(i.id === id) {
+                    i.status = i.status === 'Paid' ? 'Pending Balance' : 'Paid';
+                }
+                return i;
+            });
+            localStorage.setItem('medicore_invoices', JSON.stringify(invoices));
+            loadTables();
+        }
+
+        function toggleApptStatus(id) {
+            let appts = JSON.parse(localStorage.getItem('medicore_appointments'));
+            appts = appts.map(a => {
+                if(a.id === id) {
+                    a.status = a.status === 'Confirmed' ? 'Checked In' : 'Confirmed';
+                }
+                return a;
+            });
+            localStorage.setItem('medicore_appointments', JSON.stringify(appts));
+            loadTables();
+        }
+
+        function openAppointmentModal() { document.getElementById('modal-appointment').style.display = 'flex'; }
+        function openInvoiceModal() { document.getElementById('modal-invoice').style.display = 'flex'; }
+        function closeModals() {
+            document.getElementById('modal-appointment').style.display = 'none';
+            document.getElementById('modal-invoice').style.display = 'none';
+        }
+
+        function saveNewAppointment() {
+            const name = document.getElementById('appt-patient-name').value;
+            const doctor = document.getElementById('appt-doctor').value;
+            const time = document.getElementById('appt-time').value;
+
+            if(!name) { alert('Please enter patient name.'); return; }
+
+            let appts = JSON.parse(localStorage.getItem('medicore_appointments'));
+            appts.push({ id: 'APT-' + Math.floor(600 + Math.random() * 300), name, doctor, time, status: 'Confirmed' });
+            localStorage.setItem('medicore_appointments', JSON.stringify(appts));
+
+            closeModals();
+            loadTables();
+            alert('Appointment scheduled and saved to LocalStorage!');
+        }
+
+        function saveNewInvoice() {
+            const name = document.getElementById('inv-patient-name').value;
+            const service = document.getElementById('inv-service').value;
+            const amount = document.getElementById('inv-amount').value;
+
+            if(!name) { alert('Please enter patient name.'); return; }
+
+            let invoices = JSON.parse(localStorage.getItem('medicore_invoices'));
+            invoices.push({ id: 'INV-' + Math.floor(900 + Math.random() * 100), name, service, amount, status: 'Pending Balance' });
+            localStorage.setItem('medicore_invoices', JSON.stringify(invoices));
+
+            closeModals();
+            loadTables();
+            alert('Invoice generated and stored securely!');
+        }
+
+        function filterPatientTable() {
+            const query = document.getElementById('patient-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#patient-table-body tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function filterBillingTable() {
+            const query = document.getElementById('billing-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#billing-table-body tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
         function logout() {
-            isLoggedIn = false;
             document.getElementById('app-screen').style.display = 'none';
-            showLoginForm('doctor');
+            openAuthModal('doctor');
         }
 
         function openNavInfo(key) {
-            if(!isLoggedIn) {
-                alert('Please log into a portal first to view detailed system sections.');
-                showLoginForm('doctor');
-                return;
-            }
             document.getElementById('dashboard-view').style.display = 'none';
             document.querySelectorAll('.detail-view').forEach(v => v.style.display = 'none');
             
@@ -592,47 +782,9 @@
             document.getElementById('dashboard-view').style.display = 'block';
         }
 
-        function addAppointment() {
-            const name = prompt("Enter Patient Name:");
-            if (!name) return;
-            const doctor = prompt("Enter Assigned Doctor:", "Dr. Ramesh Kumar");
-            const date = prompt("Enter Timestamp (e.g., 2026-06-08 02:00 PM):", "2026-06-08 10:00 AM");
-            
-            const tbody = document.getElementById('appt-table-body');
-            const newRow = document.createElement('tr');
-            const randomId = 'APT-' + Math.floor(100 + Math.random() * 900);
-            
-            newRow.innerHTML = `
-                <td>${randomId}</td>
-                <td>${name}</td>
-                <td>${doctor}</td>
-                <td>${date}</td>
-                <td><span class="status-badge status-conf">Confirmed</span></td>
-            `;
-            tbody.appendChild(newRow);
-            alert("New appointment added successfully!");
-        }
-
-        function addInvoice() {
-            const name = prompt("Enter Patient Name:");
-            if (!name) return;
-            const service = prompt("Enter Service Details:", "General Consultation & Diagnostics");
-            const amount = prompt("Enter Amount in Rupees (₹):", "₹2,500");
-            
-            const tbody = document.getElementById('billing-table-body');
-            const newRow = document.createElement('tr');
-            const randomId = 'INV-' + Math.floor(100 + Math.random() * 900);
-            
-            newRow.innerHTML = `
-                <td>${randomId}</td>
-                <td>${name}</td>
-                <td>${service}</td>
-                <td>${amount}</td>
-                <td><span class="status-badge status-conf">Pending Balance</span></td>
-            `;
-            tbody.appendChild(newRow);
-            alert("New invoice generated successfully!");
-        }
+        window.onload = () => {
+            openAuthModal('doctor');
+        };
     </script>
 </body>
 </html>
